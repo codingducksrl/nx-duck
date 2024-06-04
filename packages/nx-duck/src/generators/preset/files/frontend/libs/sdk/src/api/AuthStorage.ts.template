@@ -1,0 +1,26 @@
+export class AuthStorage {
+
+    public static async storeToken(token: string) {
+        localStorage.setItem('auth.access_token', token);
+    }
+
+    public static async getToken(): Promise<string | null> {
+        return localStorage.getItem('auth.access_token');
+    }
+
+    public static async removeToken() {
+        localStorage.removeItem('auth.access_token');
+    }
+
+    public static async storeRefreshToken(refreshToken: string) {
+        localStorage.setItem('auth.refresh_token', refreshToken);
+    }
+
+    public static async getRefreshToken(): Promise<string | null> {
+        return localStorage.getItem('auth.refresh_token');
+    }
+
+    public static async removeRefreshToken() {
+        localStorage.removeItem('auth.refresh_token');
+    }
+}

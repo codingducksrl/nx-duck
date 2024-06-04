@@ -1,0 +1,90 @@
+import React from "react";
+import {FormikWrapper, FormikWrapperProps} from "../../atoms/FormikWrapper/FormikWrapper";
+import {FormikValues} from "formik/dist/types";
+import {useFormikContext} from "formik";
+import {Switch} from "@headlessui/react";
+
+export type FormikTestTemplateProps<Values extends FormikValues = FormikValues, ExtraProps = {}> =
+    Omit<FormikWrapperProps<Values, ExtraProps>, "onSubmit">
+
+function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(' ')
+}
+
+export function FormikTestTemplate<Values extends FormikValues = FormikValues, ExtraProps = {}>(props: FormikTestTemplateProps<Values, ExtraProps>) {
+    const propsWithoutChildren = {...props}
+    const [state, setState] = React.useState<string>("{}");
+
+    delete propsWithoutChildren.children
+    return <FormikWrapper {...propsWithoutChildren} onSubmit={(valuse, {setSubmitting}) => {
+        setState(JSON.stringify(valuse, null, 2));
+        setSubmitting(false)
+    }
+    }>
+        {props.children}
+        <FormikTestSubFunction state={state}/>
+    </FormikWrapper>;
+}
+
+function FormikTestSubFunction(props: { state: string }) {
+
+    const [realtime, setRealtime] = React.useState<boolean>(false)
+    const {isSubmitting,errors, submitCount, values} = useFormikContext()
+
+    const realtimeState = JSON.stringify(values, null, 2)
+
+    return <div
+        className={"mt-4 rounded-lg w-full flex items-center flex-col justify-center bg-yellow-100 p-[1rem] border-solid border-[0.063rem] border-yellow-500"}>
+        <button
+            type="submit" disabled={isSubmitting}
+            className="rounded-md w-full bg-yellow-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-yellow-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600"
+        >
+            Submit
+        </button>
+
+        <div className={"mt-4 w-full"}>
+            <p>Submit count: {submitCount}</p>
+            <Toggle enabled={realtime} setEnabled={setRealtime}/>
+        </div>
+
+        <p className={"text-left w-full mt-4"}>Values:</p>
+        <div className={"mt-1 bg-white rounded-lg p-[2rem] w-full"}>
+            <pre>{realtime ? realtimeState : props.state}</pre>
+        </div>
+
+        <p className={"text-left w-full mt-4"}>Errors:</p>
+        <div className={"mt-1 bg-white rounded-lg p-[2rem] w-full"}>
+
+            <pre>{JSON.stringify(errors, null, 2)}</pre>
+        </div>
+    </div>
+}
+
+function Toggle(props: { enabled: boolean, setEnabled: (enabled: boolean) => void }) {
+
+    const {enabled, setEnabled} = props
+
+    return <Switch.Group as="div" className="flex items-center mt-[0.5rem] ">
+        <Switch
+            checked={enabled}
+            onChange={setEnabled}
+            className={classNames(
+                enabled ? 'bg-yellow-700' : 'bg-gray-200',
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2'
+            )}
+        >
+            <span className="sr-only">Realtime update</span>
+            <span
+                aria-hidden="true"
+                className={classNames(
+                    enabled ? 'translate-x-5' : 'translate-x-0',
+                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                )}
+            />
+        </Switch>
+        <Switch.Label as="span" className="ml-3">
+            <p>Realtime update</p>
+        </Switch.Label>
+    </Switch.Group>
+
+}

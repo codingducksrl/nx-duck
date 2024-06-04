@@ -1,0 +1,85 @@
+import { LoginResponse } from './Authentication.types';
+import { AuthStorage } from '../AuthStorage';
+import axios, { AxiosError, AxiosInstance } from 'axios';
+import { Settings } from '@<%= workspaceName %>/settings';
+
+
+export class Authentication {
+
+    protected http: AxiosInstance;
+
+    constructor() {
+        this.http = axios.create({
+            baseURL: Settings.apiUrl
+        });
+    }
+
+    public async login(email: string, password: string) {
+        //TODO LOGIN
+        const result = {data: {} as LoginResponse} ;
+        await this.storeLoginData(result.data);
+    }
+
+    public async getToken() {
+        let token = await AuthStorage.getToken();
+        if (!token || !this.isTokenValid(token)) {
+            token = await this.refreshToken();
+            if (!token || !this.isTokenValid(token)) {
+                throw new AxiosError('Token is not valid', '403');
+            }
+        }
+        return token;
+    }
+
+    public async isAuthenticated() {
+        try {
+            await this.getToken();
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    public async logout() {
+        await AuthStorage.removeToken();
+        await AuthStorage.removeRefreshToken();
+    }
+
+    public async refreshToken() {
+        const refreshToken = await AuthStorage.getRefreshToken();
+        if (!refreshToken || !this.isTokenValid(refreshToken)) {
+            throw new AxiosError('No refresh token found.', '403');
+        }
+        //TODO REFRESH TOKEN
+        const result = {data: {} as LoginResponse} ;
+        await this.storeLoginData(result.data);
+
+        return result.data.access_token;
+    }
+
+    private isTokenValid(token: string | null) {
+        if (!token) {
+            return false;
+        }
+        try {
+            const payload = token.split('.')[1] ?? undefined;
+            if (!payload) {
+                return false;
+            }
+            const payloadData = JSON.parse(atob(payload));
+
+            const now = new Date();
+            const iat = payloadData.iat ? new Date(payloadData.iat * 1000) : now;
+            const exp = payloadData.exp ? new Date(payloadData.exp * 1000) : now;
+
+            return iat <= now && exp >= now;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    private async storeLoginData(data: LoginResponse) {
+        await AuthStorage.storeToken(data.access_token);
+        await AuthStorage.storeRefreshToken(data.refresh_token);
+    }
+}

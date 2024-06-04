@@ -1,0 +1,19 @@
+import { Authentication } from './endpoints/Authentication';
+
+export class Api {
+
+    protected static instance: Api;
+
+    public static getInstance() {
+        if (!Api.instance) {
+            Api.instance = new Api();
+        }
+        return Api.instance;
+
+    }
+
+    public authentication() {
+        return new Authentication();
+    }
+
+}

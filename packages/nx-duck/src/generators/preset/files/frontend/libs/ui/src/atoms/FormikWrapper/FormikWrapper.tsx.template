@@ -1,0 +1,21 @@
+import {Form, Formik} from "formik";
+import React, {PropsWithChildren} from "react";
+import {FormikConfig, FormikValues} from "formik/dist/types";
+
+export type FormikWrapperProps<Values extends FormikValues = FormikValues, ExtraProps = {}> =
+    FormikConfig<Values>
+    & ExtraProps
+    & PropsWithChildren<{
+    className?: string
+    formId?: string
+}>
+
+
+export function FormikWrapper<Values extends FormikValues = FormikValues, ExtraProps = {}>(props: FormikWrapperProps<Values, ExtraProps>) {
+    return <Formik
+        {...props}>
+        <Form className={props.className} id={props.formId}>
+            {props.children}
+        </Form>
+    </Formik>;
+}

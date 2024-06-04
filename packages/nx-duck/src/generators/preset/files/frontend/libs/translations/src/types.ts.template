@@ -1,0 +1,8 @@
+// import all namespaces (for the default language, only)
+import translation from "../locales/it/translation.json";
+
+export const DefaultNamespace = "translation";
+
+export type TranslationResources = {
+    translation: typeof translation;
+};

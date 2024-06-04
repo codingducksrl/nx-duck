@@ -5,5 +5,8 @@ export type Configuration = {
     backend: {
         database: 'mariadb' | 'mongodb';
         services: ('redis' | 'mailpit')[];
+    },
+    frontend: {
+        services: ('ui' | 'sdk' | 'translations')[];
     }
 }

@@ -1,0 +1,7 @@
+import {paths} from "./schema";
+
+export type Endpoint = keyof paths
+export type OkResponse<T extends Endpoint,M extends keyof paths[T], C extends keyof paths[T][M]["responses"] = 200> = paths[T][M]["responses"][C]["content"]["application/json"]
+export type Body<T extends Endpoint,M extends keyof paths[T]> = paths[T][M]["requestBody"]["content"]["application/json"]
+export type Query<T extends Endpoint,M extends keyof paths[T]> = paths[T][M]["parameters"]["query"]
+export type UnauthorizedResponse<T extends Endpoint,M extends keyof paths[T]> = paths[T][M]["responses"]["401"]["content"]["application/json"]

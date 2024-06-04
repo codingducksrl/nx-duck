@@ -1,8 +1,9 @@
-import { formatFiles, installPackagesTask, Tree } from '@nx/devkit';
+import { formatFiles, generateFiles, installPackagesTask, Tree } from '@nx/devkit';
 
 import { PresetGeneratorSchema } from './schema';
 import { promptConfiguration } from './prompts';
 import { createFrontend } from './frontend';
+import * as path from 'node:path';
 
 
 export async function presetGenerator(
@@ -16,18 +17,25 @@ export async function presetGenerator(
     //   // Other options as needed
     // });
 
+
     const response = await promptConfiguration();
 
     if (response.type.includes('frontend')) {
-        await createFrontend(tree, response);
+        await createFrontend(tree, response, options.name);
     }
 
     // addFiles(tree, options,{}, {}); // Adjusted for clarity
 
     // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
+
+
+    generateFiles(tree, path.join(__dirname, 'files', 'root'), `/`, {});
+
     await formatFiles(tree);
 
-    installPackagesTask(tree, true);
+    return () => {
+        installPackagesTask(tree);
+    };
 }
 
 export default presetGenerator;
