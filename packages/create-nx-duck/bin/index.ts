@@ -12,7 +12,7 @@ async function main() {
 
   // This assumes "nx-duck" and "create-nx-duck" are at the same version
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const presetVersion = require('../package.json').version;
+  const presetVersion = 'latest';
 
   // TODO: update below to customize the workspace
   const { directory } = await createWorkspace(`nx-duck@${presetVersion}`, {
