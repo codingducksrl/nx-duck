@@ -8,15 +8,33 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
 
     const libsRoot = configuration.type.includes('backend') ? 'fe-libs' : 'libs';
 
+    const applicationName = configuration.type.includes('backend') ? 'frontend' : 'app';
+    const applicationPath = configuration.type.includes('backend') ? 'apps/frontend' : 'app';
+
     await applicationGenerator(tree, {
-        name: 'frontend',
+        name: applicationName,
         style: 'tailwind',
         linter: Linter.EsLint,
+        bundler: 'vite',
         skipFormat: true,
         unitTestRunner: 'jest',
         e2eTestRunner: 'none',
         projectNameAndRootFormat: 'as-provided',
-        directory: 'apps/frontend'
+        directory: applicationPath
+    });
+
+    tree.delete(`${applicationPath}/src/app`);
+
+    updateJson(tree, 'package.json', (pkgJson) => {
+
+        pkgJson.devDependencies['react-router-dom'] = '^6.23.1';
+
+        return pkgJson;
+    });
+
+    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'app'), applicationPath, {
+        workspaceName: workspaceName,
+        translations: configuration.frontend.services.includes('translations')
     });
 
     await generateSettings(tree, libsRoot);
