@@ -4,7 +4,7 @@ export type Configuration = {
     type: ApplicationKind[];
     backend: {
         database: 'mysql' | 'mongodb' | false;
-        services: ('redis' | 'mailpit')[];
+        services: ('redis' | 'email' | 'fs')[];
     },
     frontend: {
         services: ('ui' | 'sdk' | 'translations')[];

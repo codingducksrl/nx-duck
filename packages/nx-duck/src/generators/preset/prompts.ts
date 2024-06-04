@@ -40,10 +40,11 @@ export async function promptConfiguration() {
             {
                 type: 'checkbox',
                 name: 'backend.services',
-                message: 'What additional services do you want?',
+                message: 'What additional backend services do you want?',
                 choices: [
-                    { name: 'Redis', value: 'redist' },
-                    { name: 'Mailpit', value: 'mailpit', checked: true }
+                    { name: 'Redis', value: 'redis' },
+                    { name: 'Email', value: 'email', checked: true },
+                    { name: 'Filesystem', value: 'fs' }
                 ],
                 when: (answers) => answers.type.includes('backend')
             }
