@@ -1,0 +1,22 @@
+import {Global, Module} from '@nestjs/common';
+import {PrismaService} from "./prisma.service";
+
+import {UserModel} from "./models/user.model";
+
+@Global()
+@Module({
+    providers: [
+         PrismaService,
+         UserModel
+    ],
+    exports: [
+         PrismaService,
+         UserModel
+    ],
+})
+export class DbModule {}
+
+export {
+    PrismaService,
+    UserModel
+}

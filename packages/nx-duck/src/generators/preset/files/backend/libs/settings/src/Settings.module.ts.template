@@ -1,0 +1,17 @@
+import {Global, Module} from "@nestjs/common";
+import {SettingsService} from "./Settings.service";
+import {ConfigModule} from "@nestjs/config";
+
+@Global()
+@Module({
+    imports: [
+        ConfigModule.forRoot()
+    ],
+    controllers: [],
+    providers: [SettingsService],
+    exports: [SettingsService]
+})
+export class SettingsModule {
+}
+
+export {SettingsService}

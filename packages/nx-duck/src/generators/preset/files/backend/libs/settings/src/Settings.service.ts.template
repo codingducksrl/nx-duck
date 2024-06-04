@@ -1,0 +1,28 @@
+import {Injectable} from "@nestjs/common";
+import {ConfigService} from "@nestjs/config";
+
+@Injectable()
+export class SettingsService {
+
+    constructor(
+        private readonly config: ConfigService
+    ) {
+
+    }
+
+    get environment() {
+        return this.config.get<"development" | "staging" | "production">("ENVIRONMENT", "development")
+    }
+
+    get appUrl() {
+        return this.config.getOrThrow<string>('APP_URL');
+    }
+
+    get version() {
+        return this.config.get<string>('VERSION', 'undefined');
+    }
+
+    get port() {
+        return parseInt(this.config.get<string>('PORT', "3000"));
+    }
+}

@@ -1,10 +1,15 @@
 {
-  "generators": {
-    "preset": {
-      "factory": "./src/generators/preset/generator",
-      "schema": "./src/generators/preset/schema.json",
-      "description": "preset generator",
-      "x-use-standalone-layout": true
+    "generators": {
+        "preset": {
+            "factory": "./src/generators/preset/generator",
+            "schema": "./src/generators/preset/schema.json",
+            "description": "preset generator",
+            "x-use-standalone-layout": true
+        },
+        "prisma": {
+            "factory": "./src/generators/prisma/generator",
+            "schema": "./src/generators/prisma/schema.json",
+            "description": "prisma generator"
+        }
     }
-  }
 }

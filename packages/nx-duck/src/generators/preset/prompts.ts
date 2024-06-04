@@ -31,8 +31,9 @@ export async function promptConfiguration() {
                 name: 'backend.database',
                 message: 'What database do you want?',
                 choices: [
-                    { name: 'MariaDB', value: 'mariadb', checked: true },
-                    { name: 'MongoDB', value: 'mongodb' }
+                    { name: 'MariaDB', value: 'mysql', checked: true },
+                    { name: 'MongoDB', value: 'mongodb' },
+                    { name: 'No database', value: false }
                 ],
                 when: (answers) => answers.type.includes('backend')
             },

@@ -4,6 +4,7 @@ import { PresetGeneratorSchema } from './schema';
 import { promptConfiguration } from './prompts';
 import { createFrontend } from './frontend';
 import * as path from 'node:path';
+import { createBackend } from './backend';
 
 
 export async function presetGenerator(
@@ -22,6 +23,10 @@ export async function presetGenerator(
 
     if (response.type.includes('frontend')) {
         await createFrontend(tree, response, options.name);
+    }
+
+    if (response.type.includes('backend')) {
+        await createBackend(tree, response, options.name);
     }
 
     // addFiles(tree, options,{}, {}); // Adjusted for clarity

@@ -1,0 +1,52 @@
+
+import {Logger, ValidationPipe} from '@nestjs/common';
+import {NestFactory} from '@nestjs/core';
+
+import {AppModule} from './app/app.module';
+import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
+import {SettingsService} from "@<%= workspaceName %>/settings";
+
+async function bootstrap() {
+    const app = await NestFactory.create(AppModule, {
+        rawBody: true
+    });
+    //const globalPrefix = 'api';
+    //app.setGlobalPrefix(globalPrefix);
+
+    const settingsService = app.get<SettingsService>(SettingsService);
+
+    app.enableShutdownHooks();
+
+    const config = new DocumentBuilder()
+        .setTitle('API')
+        .setDescription('API documentation')
+        .setVersion(settingsService.version)
+        .addServer(settingsService.appUrl, "Current environment")
+        //.addTag("Authentication", "Authentication endpoints")
+        //.addTag("Health", "Health check endpoints")
+        .addBearerAuth()
+        .build();
+    const document = SwaggerModule.createDocument(app, config, {
+        ignoreGlobalPrefix: true,
+    });
+
+    app.enableCors({
+        origin: "*",
+    })
+
+    SwaggerModule.setup('docs', app, document);
+
+    app.useGlobalPipes(new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        transformOptions: {enableImplicitConversion: true},
+    }));
+
+    await app.listen(settingsService.port);
+    Logger.log(
+        `🚀 Application is running on: http://localhost:${settingsService.port}`
+    );
+
+}
+
+bootstrap();
