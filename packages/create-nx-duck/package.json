@@ -1,0 +1,13 @@
+{
+  "name": "create-nx-duck",
+  "version": "0.0.1",
+  "dependencies": {
+    "create-nx-workspace": "18.2.1"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "bin": {
+    "create-nx-duck": "./bin/index.js"
+  }
+}
