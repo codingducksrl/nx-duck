@@ -1,0 +1,12 @@
+export type HelloWorldProps = {
+  //
+}
+
+export const HelloWorld = (props: HelloWorldProps) => {
+
+  return (
+    <div>
+      <h1>Hello world</h1>
+    </div>
+  );
+};

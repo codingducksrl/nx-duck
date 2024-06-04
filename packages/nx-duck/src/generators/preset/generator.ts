@@ -1,15 +1,14 @@
-import { Tree } from '@nx/devkit';
+import { formatFiles, installPackagesTask, Tree } from '@nx/devkit';
 
 import { PresetGeneratorSchema } from './schema';
-import { applicationGenerator, libraryGenerator } from '@nx/react';
-import { Linter } from '@nx/eslint';
+import { promptConfiguration } from './prompts';
+import { createFrontend } from './frontend';
 
 
 export async function presetGenerator(
     tree: Tree,
     options: PresetGeneratorSchema
 ) {
-    const projectRoot = `apps/frontend`; // Adjusted for clarity
 
     // await lintProjectGenerator(tree, {
     //   project: 'your-project-name',
@@ -17,32 +16,18 @@ export async function presetGenerator(
     //   // Other options as needed
     // });
 
+    const response = await promptConfiguration();
 
-    await applicationGenerator(tree, {
-        name: 'frontend',
-        style: 'tailwind',
-        linter: Linter.EsLint,
-        skipFormat: true,
-        unitTestRunner: 'jest',
-        e2eTestRunner: 'none',
-        projectNameAndRootFormat: 'as-provided',
-        directory: projectRoot
-    });
-
-    await libraryGenerator(tree, {
-        name: 'ui',
-        style: 'tailwind',
-        linter: Linter.EsLint,
-        unitTestRunner: 'jest',
-        projectNameAndRootFormat: 'as-provided',
-        directory: 'libs/ui',
-        strict: true
-    });
+    if (response.type.includes('frontend')) {
+        await createFrontend(tree, response);
+    }
 
     // addFiles(tree, options,{}, {}); // Adjusted for clarity
 
     // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
-    // await formatFiles(tree);
+    await formatFiles(tree);
+
+    installPackagesTask(tree, true);
 }
 
 export default presetGenerator;
