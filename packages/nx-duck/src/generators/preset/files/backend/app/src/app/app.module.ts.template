@@ -7,11 +7,17 @@ import { HealthModule } from './health/health.module';
 <% if(db) { %>
 import { DbModule } from '@<%= workspaceName %>/db';
 <% } %>
+<% if(email) { %>
+import { EmailModule } from '@<%= workspaceName %>/email';
+<% } %>
 
 @Module({
     imports: [
         <% if(db) { %>
         DbModule,
+        <% } %>
+        <% if(email) { %>
+        EmailModule,
         <% } %>
         HealthModule
     ],

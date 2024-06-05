@@ -5,6 +5,7 @@ import { addDependenciesToPackageJson, generateFiles, Tree, updateJson } from '@
 import * as path from 'node:path';
 
 import { configurationGenerator as prismaGenerator } from '../prisma/generator';
+import { runCommandsGenerator } from '@nx/workspace';
 
 export async function createBackend(tree: Tree, configuration: Configuration, workspaceName: string) {
 
@@ -23,11 +24,11 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
 
     generateFiles(tree, path.join(__dirname, 'files', 'backend', 'app'), applicationPath, {
         workspaceName: workspaceName,
-        db: !!configuration.backend.database
+        db: !!configuration.backend.database,
+        email: configuration.backend.services.includes('email')
     });
 
-    // tree.delete(`${applicationPath}/src/app`);
-    //
+
     addDependenciesToPackageJson(tree, {
         '@nestjs/swagger': '^7.3.1',
         '@nestjs/config': '^3.2.2',
@@ -66,14 +67,64 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
         directory: 'libs/settings'
     });
 
-    generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'settings'), 'libs/settings', {});
+    generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'settings'), 'libs/settings', {
+        email: configuration.backend.services.includes('email')
+    });
 
 
     if (configuration.backend.database) {
         await createDatabase(tree, configuration, applicationPath);
     }
+
+    if (configuration.backend.services.includes('email')) {
+        await createEmail(tree, configuration, workspaceName, applicationPath);
+    }
 }
 
+async function createEmail(tree: Tree, configuration: Configuration, workspaceName: string, applicationPath: string) {
+    await libraryGenerator(tree, {
+        name: 'email',
+        linter: Linter.EsLint,
+        unitTestRunner: 'none',
+        projectNameAndRootFormat: 'as-provided',
+        strict: true,
+        buildable: true,
+        directory: 'libs/email'
+    });
+
+    addDependenciesToPackageJson(tree, {
+        '@nestjs-modules/mailer': '^2.0.2 ',
+        'nodemailer': '^6.9.13 ',
+        'handlebars': '^4.7.8',
+        '@aws-sdk/client-ses': '^3.590.0'
+    }, {
+        '@types/nodemailer': '^6.4.15',
+        'mjml': '^4.15.3'
+    });
+
+    updateJson(tree, `${applicationPath}/project.json`, (pkgJson) => {
+
+        if (!pkgJson.targets['build']['dependsOn']) {
+            pkgJson.targets['build']['dependsOn'] = [];
+        }
+
+        pkgJson.targets['build']['dependsOn'].push('email:mjml-build');
+
+        return pkgJson;
+    });
+
+    await runCommandsGenerator(tree, {
+        project: 'email',
+        name: 'mjml-build',
+        command: 'node ./libs/email/email-build.js'
+    });
+
+    generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'email'), 'libs/email', {
+        workspaceName: workspaceName
+    });
+
+    tree.delete('libs/email/src/lib');
+}
 
 async function createDatabase(tree: Tree, configuration: Configuration, applicationPath: string) {
     if (!configuration.backend.database) {

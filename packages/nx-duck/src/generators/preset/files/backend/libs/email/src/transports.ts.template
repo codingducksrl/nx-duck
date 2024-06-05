@@ -1,0 +1,36 @@
+import {SES, SendRawEmailCommand} from "@aws-sdk/client-ses";
+import {SettingsService} from "@<%= workspaceName %>/settings";
+
+export function getSmtpTransport(smtp: typeof SettingsService.prototype.smtp){
+    return {
+        host: smtp.host,
+        port: smtp.port,
+        secure: smtp.tls ,
+        auth: {
+            user: smtp.username,
+            pass: smtp.password,
+        }
+    }
+}
+
+export function getSesTransport(settings: typeof SettingsService.prototype.ses) {
+    const {accessKeyId, secretAccessKey, region} = settings;
+
+    const ses = new SES({
+        apiVersion: "2010-12-01",
+        region: region,
+        credentials: (accessKeyId && secretAccessKey) ? {
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretAccessKey
+        } : undefined
+    });
+
+    return {
+        SES: {
+            ses,
+            aws: {
+                SendRawEmailCommand
+            }
+        },
+    }
+}

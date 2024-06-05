@@ -25,4 +25,34 @@ export class SettingsService {
     get port() {
         return parseInt(this.config.get<string>('PORT', "3000"));
     }
+
+    <% if(email) { %>
+
+    get email() {
+        return {
+            from: this.config.getOrThrow<string>('EMAIL_FROM'),
+            fromName: this.config.get<string>('EMAIL_FROM_NAME', 'Payment'),
+            transport: this.config.get<string>('EMAIL_TRANSPORT', 'smtp') as "smtp" | "ses",
+        }
+    }
+
+    get ses() {
+        return {
+            accessKeyId: this.config.get<string>('AWS_ACCESS_KEY_ID'),
+            secretAccessKey: this.config.get<string>('AWS_SECRETA_ACCESS_KEY'),
+            region: this.config.get<string>('AWS_REGION'),
+        }
+    }
+
+    get smtp() {
+        return {
+            host: this.config.getOrThrow<string>('EMAIL_HOST'),
+            port: this.config.get<number>('EMAIL_PORT', 587),
+            username: this.config.getOrThrow<string>('EMAIL_USERNAME'),
+            password: this.config.getOrThrow<string>('EMAIL_PASSWORD'),
+            tls: this.config.get<string>('EMAIL_TLS', "true") === "true",
+
+        }
+    }
+    <% } %>
 }

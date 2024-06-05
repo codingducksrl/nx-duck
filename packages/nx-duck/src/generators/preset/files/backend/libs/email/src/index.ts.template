@@ -1,0 +1,54 @@
+import {Module} from '@nestjs/common';
+import {MailerModule} from "@nestjs-modules/mailer";
+import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import * as process from "process";
+import {EmailService} from "./Email.service.ts";
+import {SettingsService} from "@<%= workspaceName %>/settings";
+import {getSesTransport, getSmtpTransport} from "./transports";
+
+@Module({
+    imports: [
+        MailerModule.forRootAsync({
+            inject: [SettingsService],
+            useFactory: (settings: SettingsService) => {
+
+                const email = settings.email;
+
+                let transport = {};
+
+                switch (email.transport) {
+                    case "smtp":
+                        transport = getSmtpTransport(settings.smtp);
+                        break;
+                    case "ses":
+                        transport = getSesTransport(settings.ses);
+                        break;
+                }
+
+                return {
+                    transport: transport,
+                    defaults: {
+                        from: {
+                            name: email.fromName,
+                            address: email.from,
+                        },
+                    },
+                    template: {
+                        dir: process.cwd() + '/dist/emails',
+                        adapter: new HandlebarsAdapter(),
+                        options: {
+                            strict: false,
+                        },
+                    },
+                }
+            },
+        }),
+    ],
+    controllers: [],
+    providers: [EmailService],
+    exports: [EmailService],
+})
+export class EmailModule {
+}
+
+export {EmailService};

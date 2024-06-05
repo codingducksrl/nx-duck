@@ -1,0 +1,38 @@
+const fs = require("fs");
+const path = require('path');
+const mjml = require("mjml");
+
+// Check if the dist/email folder exists recursively create it if not
+if (!fs.existsSync("dist/emails")) {
+    fs.mkdirSync("dist/emails", {recursive: true});
+}
+
+// Use mjml to build the email templates
+
+// Read all the files in the src/email folder
+fs.readdirSync("libs/email/templates").forEach(file => {
+    if (path.extname(file) !== ".mjml"){
+        return;
+    }
+        // Read the file
+    const email = fs.readFileSync(`libs/email/templates/${file}`, "utf8");
+
+    // Build the mjml
+    const {html} = mjml(email, {});
+
+    // Remove the .mjml extension from the output filename by deleting the last 5 characters
+    file = file.slice(0, -5);
+
+    // Write the built email to the dist/email folder
+    fs.writeFileSync(`dist/emails/${file}.hbs`, html);
+});
+
+fs.readdirSync("libs/email/html-templates").forEach(file => {
+    if (path.extname(file) !== ".html"){
+        return;
+    }
+
+    file = file.slice(0, -5);
+
+    fs.copyFileSync(`libs/email/html-templates/${file}.html`, `dist/emails/${file}.hbs`);
+})
