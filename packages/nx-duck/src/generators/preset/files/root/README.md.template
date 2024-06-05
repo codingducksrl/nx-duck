@@ -1,0 +1,84 @@
+# Project name
+
+## Prerequisites
+Install the npm dependencies
+```
+npm install
+```
+
+## Development
+
+<% if(frontend) { %>
+### Frontend
+In order to start the frontend, run the following command:
+```
+nx serve frontend
+```
+
+The frontend will be available at http://localhost:4200/.
+
+You can also start storybook by running the following command:
+```
+nx storybook ui
+```
+Storybook will be available at http://localhost:4400/.
+<% } if(backend) { %>
+### Backend
+In order to start the backend, run the following command:
+```
+nx serve backend
+```
+
+The backend will be available at http://localhost:3000/.
+
+There is also a swagger documentation available at http://localhost:3000/docs and
+a health check at http://localhost:3000/health.
+
+### Other services
+In order to start the database servers, run the following command:
+```
+docker compose up
+```
+It will start the following servers:
+<% if(mariadb) { %>
+* mariadb
+    * Host: localhost
+    * Port: 3306
+    * User: {FROM .env}
+    * Password: {FROM .env}
+    * Database: {FROM .env}
+<% } if(mongodb) { %>
+* mongodb
+    * Host: localhost
+    * Port: 27017
+    * User: {FROM .env}
+    * Password: {FROM .env}
+    * Database: {FROM .env}
+<% } if(redis) { %>
+* redis
+    * Host: localhost
+    * Port: 6379
+<% } if(mailpit) { %>
+* mailpit
+    * Host: localhost
+    * Port: 1025
+<% } %>
+
+<% } %>
+
+## Production
+<% if(frontend) { %>
+### Frontend
+To build the project run:
+```
+nx run frontend:build:production
+```
+The build artifacts will be stored in the `dist/` directory, ready to be deployed.
+<% } if(backend) {%>
+### Backend
+To build the project run:
+```
+nx run backend:build:production
+```
+The build artifacts will be stored in the `dist/` directory, ready to be deployed.
+<% } %>
