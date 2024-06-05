@@ -24,9 +24,11 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
 
     generateFiles(tree, path.join(__dirname, 'files', 'backend', 'app'), applicationPath, {
         workspaceName: workspaceName,
+        applicationPath: applicationPath,
         db: !!configuration.backend.database,
         email: configuration.backend.services.includes('email'),
-        fs: configuration.backend.services.includes('fs')
+        fs: configuration.backend.services.includes('fs'),
+        migrations: configuration.backend.database && ['mysql'].includes(configuration.backend.database)
     });
 
 
@@ -104,7 +106,7 @@ async function createFilesystem(tree: Tree, configuration: Configuration, worksp
         '@aws-sdk/s3-request-presigner': '^3.590.0',
         'mime-types': '^2.1.35'
     }, {
-        '@types/mime-types ': '^2.1.4'
+        '@types/mime-types': '^2.1.4'
     });
 
     generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'filesystem'), 'libs/filesystem', {

@@ -1,0 +1,57 @@
+FROM docker.io/node:lts-alpine as build
+
+ARG SHORT_SHA=undefined
+ENV VERSION=$SHORT_SHA
+ENV HOST=0.0.0.0
+ENV PORT=3000
+
+WORKDIR /app
+
+RUN addgroup --system backend && adduser --system -G backend backend
+
+COPY . /app
+RUN chown -R backend:backend .
+
+
+RUN npm install
+<% if(db) { %>
+RUN npx nx prisma-generate db
+<% } %>
+RUN npx nx run backend:build:production
+
+
+FROM docker.io/node:lts-alpine as production
+
+ARG SHORT_SHA=undefined
+ENV VERSION=$SHORT_SHA
+ENV HOST=0.0.0.0
+ENV PORT=3000
+
+WORKDIR /app
+
+RUN addgroup --system backend && adduser --system -G backend backend
+
+COPY --from=build /app/package.json backend/package.json
+COPY --from=build /app/package-lock.json backend/package-lock.json
+COPY --from=build /app/dist/<%= applicationPath %> backend
+<% if(db) { %>
+COPY --from=build /app/libs/db/prisma/* backend/
+<% } %>
+<% if(email) { %>
+COPY --from=build /app/dist/emails dist/emails
+<% } %>
+RUN chown -R backend:backend .
+
+RUN npm --prefix backend --omit=dev -f install
+
+<% if(db) { %>
+RUN cd backend && npx prisma generate
+<% } %>
+
+COPY ./<%= applicationPath %>/push-and-start.sh backend/push-and-start.sh
+RUN chmod +x backend/push-and-start.sh
+RUN chown -R backend:backend backend/push-and-start.sh
+
+EXPOSE $PORT
+
+ENTRYPOINT ./backend/push-and-start.sh

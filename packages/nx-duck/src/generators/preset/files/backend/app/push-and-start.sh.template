@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+<% if(db) { %>
+cd backend
+<% if(migrations) { %>
+echo "Executing migrations"
+npx prisma migrate deploy --schema=./schema.prisma
+<% } else { %>
+echo "Pushing database"
+npx prisma db push
+<% } %>
+cd ..
+<% } %>
+
+echo "Starting backend"
+exec node ./backend/main.js
