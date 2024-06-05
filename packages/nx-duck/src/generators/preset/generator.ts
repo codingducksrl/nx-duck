@@ -34,7 +34,28 @@ export async function presetGenerator(
     // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
 
 
-    generateFiles(tree, path.join(__dirname, 'files', 'root'), `/`, {});
+    generateFiles(tree, path.join(__dirname, 'files', 'root'), `/`, {
+        mariadb: response.backend && response.backend.database === 'mysql',
+        mongodb: response.backend && response.backend.database === 'mongodb',
+        redis: response.backend && response.backend.services.includes('redis'),
+        mailpit: response.backend && response.backend.services.includes('email'),
+        fs: response.backend && response.backend.services.includes('fs'),
+        db: response.backend && !!response.backend.database,
+        backend: response.type.includes('backend'),
+        frontend: response.type.includes('frontend')
+    });
+
+    const env = tree.read('.env', 'utf-8');
+    tree.write('.env.example', env);
+
+    if (!response.type.includes('backend')) {
+        tree.delete('docker');
+        tree.delete('docker-compose.yaml');
+    }
+
+    if (!(response.backend && !!response.backend.database)) {
+        tree.delete('docker');
+    }
 
     await formatFiles(tree);
 
