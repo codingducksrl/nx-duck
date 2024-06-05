@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { Settings } from '@<%= workspaceName %>/settings';
+import { Settings } from '@<%= workspaceName %>/config';
 import { Authentication } from './endpoints/Authentication';
 
 export default class Request {

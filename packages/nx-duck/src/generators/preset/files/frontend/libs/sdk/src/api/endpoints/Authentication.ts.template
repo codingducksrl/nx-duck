@@ -1,7 +1,7 @@
 import { LoginResponse } from './Authentication.types';
 import { AuthStorage } from '../AuthStorage';
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { Settings } from '@<%= workspaceName %>/settings';
+import { Settings } from '@<%= workspaceName %>/config';
 
 
 export class Authentication {

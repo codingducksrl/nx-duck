@@ -54,16 +54,16 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
 
 async function generateSettings(tree: Tree, libsRoot: string) {
     await libraryGenerator(tree, {
-        name: 'settings',
+        name: 'config',
         style: 'none',
         linter: Linter.EsLint,
         unitTestRunner: 'jest',
         projectNameAndRootFormat: 'as-provided',
-        directory: `${libsRoot}/settings`,
+        directory: `${libsRoot}/config`,
         strict: true
     });
 
-    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'settings'), `${libsRoot}/settings`, {});
+    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'config'), `${libsRoot}/config`, {});
 }
 
 async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string) {
