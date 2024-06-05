@@ -4,12 +4,16 @@ import { Linter } from '@nx/eslint';
 import { generateFiles, Tree, updateJson } from '@nx/devkit';
 import * as path from 'node:path';
 
+export function getFrontendApplicationPath(configuration: Configuration) {
+    return configuration.type.includes('backend') ? 'apps/frontend' : 'app';
+}
+
 export async function createFrontend(tree: Tree, configuration: Configuration, workspaceName: string) {
 
     const libsRoot = configuration.type.includes('backend') ? 'fe-libs' : 'libs';
 
     const applicationName = configuration.type.includes('backend') ? 'frontend' : 'app';
-    const applicationPath = configuration.type.includes('backend') ? 'apps/frontend' : 'app';
+    const applicationPath = getFrontendApplicationPath(configuration);
 
     await applicationGenerator(tree, {
         name: applicationName,

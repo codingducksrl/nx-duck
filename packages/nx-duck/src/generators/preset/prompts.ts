@@ -47,6 +47,35 @@ export async function promptConfiguration() {
                     { name: 'Filesystem', value: 'fs' }
                 ],
                 when: (answers) => answers.type.includes('backend')
+            },
+            {
+                type: 'list',
+                name: 'backend.deployment',
+                message: 'Which deployment workflow do you want to use for the backend?',
+                choices: [
+                    { name: 'AWS ECR', value: 'aws-ecr', checked: true },
+                    { name: 'None', value: false }
+                ],
+                when: (answers) => answers.type.includes('backend')
+            },
+            {
+                type: 'list',
+                name: 'frontend.deployment',
+                message: 'Which deployment workflow do you want to use for the frontend?',
+                choices: [
+                    { name: 'AWS S3', value: 'aws-s3', checked: true },
+                    { name: 'None', value: false }
+                ],
+                when: (answers) => answers.type.includes('frontend')
+            },
+            {
+                type: 'confirm',
+                name: 'staging',
+                message: 'Do you have a staging environment?',
+                default: true,
+                when: (answers) => {
+                    return (answers.frontend && answers.frontend.deployment) || (answers.backend && answers.backend.deployment);
+                }
             }
         ]);
 

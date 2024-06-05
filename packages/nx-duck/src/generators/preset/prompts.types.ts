@@ -5,8 +5,11 @@ export type Configuration = {
     backend: {
         database: 'mysql' | 'mongodb' | false;
         services: ('redis' | 'email' | 'fs')[];
+        deployment: 'aws-ecr' | false;
     },
     frontend: {
         services: ('ui' | 'sdk' | 'translations')[];
+        deployment: 'aws-s3' | false;
     }
+    staging: boolean | undefined
 }

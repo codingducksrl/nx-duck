@@ -1,0 +1,31 @@
+name: Deploy to staging
+on:
+    push:
+        branches:
+            - staging
+permissions:
+    id-token: write   # This is required for requesting the JWT
+    actions: read
+    contents: read    # This is required for actions/checkout
+
+concurrency:
+    group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+    cancel-in-progress: true
+
+jobs:
+<% if(deployBackend) { %>
+    backend:
+        name: Backend deployment
+        uses: ./.github/workflows/build-and-push-backend.yml
+        secrets: inherit
+        with:
+            environment: staging
+<% } %>
+<% if(deployFrontend) { %>
+    frontend:
+        name: Frontend deployment
+        uses: ./.github/workflows/build-and-push-frontend.yml
+        secrets: inherit
+        with:
+            environment: staging
+<% } %>

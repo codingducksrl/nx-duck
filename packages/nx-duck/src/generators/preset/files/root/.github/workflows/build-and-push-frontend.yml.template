@@ -1,0 +1,44 @@
+name: Frontend deployment
+
+on:
+    workflow_call:
+        inputs:
+            environment:
+                type: string
+                description: "The environment to deploy to"
+                required: true
+
+jobs:
+    deploy:
+        name: Deploy ${{ inputs.environment }}
+        runs-on: ubuntu-latest
+        environment: ${{ inputs.environment }}
+
+        steps:
+            -   uses: actions/checkout@v4
+            -   name: Configure AWS Credentials
+                uses: aws-actions/configure-aws-credentials@v4
+                with:
+                    role-to-assume: ${{ vars.AWS_ROLE }}
+                    aws-region: ${{ vars.AWS_REGION }}
+
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 20
+                    cache: "npm"
+            -   name: Generate the short sha
+                uses: benjlevesque/short-sha@v3.0
+                id: short-sha
+                with:
+                    length: 7
+            -   name: Install
+                run: npm install
+            -   name: Create .env
+                run: |
+                    echo "VITE_API_URL=${{ vars.API_URL }}" > .env
+                    echo "VITE_VERSION=${{ steps.short-sha.outputs.sha }}" >> .env
+            -   name: Build
+                run: npx nx run frontend:build:production
+
+            -   name: Deploy static site to S3 bucket
+                run: aws s3 sync ./dist/<%= frontendPath %> s3://${{ vars.AWS_BUCKET }} --delete

@@ -7,10 +7,14 @@ import * as path from 'node:path';
 import { configurationGenerator as prismaGenerator } from '../prisma/generator';
 import { runCommandsGenerator } from '@nx/workspace';
 
+export function getBackendApplicationPath(configuration: Configuration) {
+    return configuration.type.includes('frontend') ? 'apps/backend' : 'backend';
+}
+
 export async function createBackend(tree: Tree, configuration: Configuration, workspaceName: string) {
 
 
-    const applicationPath = configuration.type.includes('frontend') ? 'apps/backend' : 'backend';
+    const applicationPath = getBackendApplicationPath(configuration);
 
     await applicationGenerator(tree, {
         name: 'backend',
