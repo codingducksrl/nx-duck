@@ -25,7 +25,8 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
     generateFiles(tree, path.join(__dirname, 'files', 'backend', 'app'), applicationPath, {
         workspaceName: workspaceName,
         db: !!configuration.backend.database,
-        email: configuration.backend.services.includes('email')
+        email: configuration.backend.services.includes('email'),
+        fs: configuration.backend.services.includes('fs')
     });
 
 
@@ -68,7 +69,8 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
     });
 
     generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'settings'), 'libs/settings', {
-        email: configuration.backend.services.includes('email')
+        email: configuration.backend.services.includes('email'),
+        fs: configuration.backend.services.includes('fs')
     });
 
 
@@ -79,6 +81,35 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
     if (configuration.backend.services.includes('email')) {
         await createEmail(tree, configuration, workspaceName, applicationPath);
     }
+
+    if (configuration.backend.services.includes('fs')) {
+        await createFilesystem(tree, configuration, workspaceName);
+    }
+}
+
+async function createFilesystem(tree: Tree, configuration: Configuration, workspaceName: string) {
+    await libraryGenerator(tree, {
+        name: 'filesystem',
+        linter: Linter.EsLint,
+        unitTestRunner: 'none',
+        projectNameAndRootFormat: 'as-provided',
+        strict: true,
+        buildable: true,
+        directory: 'libs/filesystem'
+    });
+
+    addDependenciesToPackageJson(tree, {
+        '@aws-sdk/client-s3': '^3.590.0',
+        '@aws-sdk/lib-storage': '^3.590.0',
+        '@aws-sdk/s3-request-presigner': '^3.590.0',
+        'mime-types': '^2.1.35'
+    }, {
+        '@types/mime-types ': '^2.1.4'
+    });
+
+    generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'filesystem'), 'libs/filesystem', {
+        workspaceName: workspaceName
+    });
 }
 
 async function createEmail(tree: Tree, configuration: Configuration, workspaceName: string, applicationPath: string) {

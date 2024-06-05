@@ -1,0 +1,94 @@
+import { FilesystemAdapter } from './adapter';
+import { Readable } from 'stream';
+import * as aws from '@aws-sdk/client-s3';
+import { GetObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import * as mime from 'mime-types';
+
+export class S3FilesystemAdapter implements FilesystemAdapter {
+
+    private fs: aws.S3;
+
+    constructor(private bucketName: string, config: S3ClientConfig = {}, private name?: string) {
+        this.fs = new aws.S3([config])
+    }
+
+    getIdentifier(): string {
+        return this.name ?? "s3";
+    }
+
+    private getPath(filename: string, namespace?: string): string {
+        if (namespace) {
+            return `${namespace}/${filename}`
+        }
+        return filename;
+    }
+
+    public async getSignedURL(filename: string, expiresIn = 3600, namespace?: string, contentDisposition = "inline"): Promise<string> {
+        const command = new GetObjectCommand({
+            Bucket: this.bucketName,
+            Key: this.getPath(filename, namespace),
+            ResponseContentType: mime.lookup(filename) || "application/octet-stream",
+            ResponseContentDisposition: `${contentDisposition}; filename="${filename}"`
+        });
+        return await getSignedUrl(this.fs, command, {expiresIn: expiresIn});
+    }
+
+    async delete(filename: string, namespace?: string): Promise<void> {
+        await this.fs.deleteObject({
+            Bucket: this.bucketName,
+            Key: this.getPath(filename, namespace),
+        });
+        return Promise.resolve(undefined);
+    }
+
+    async download(filename: string, namespace?: string): Promise<Readable> {
+        const object = await this.fs.getObject({
+            Bucket: this.bucketName,
+            Key: this.getPath(filename, namespace),
+        });
+        if (!object.Body) throw new Error("Object body is empty");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return Readable.fromWeb(object.Body.transformToWebStream() as any)
+    }
+
+    async exists(filename: string, namespace?: string): Promise<boolean> {
+        try {
+            await this.fs.headObject({
+                Bucket: this.bucketName,
+                Key: this.getPath(filename, namespace),
+            });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async getURL(filename: string, namespace?: string): Promise<string> {
+        return `/file/${namespace}/${filename}`;
+    }
+
+    async list(namespace?: string): Promise<string[]> {
+        const objects = await this.fs.listObjectsV2({
+            Bucket: this.bucketName,
+            Prefix: namespace ? `${namespace}/` : "/",
+        });
+        if (!objects.Contents) return [];
+        return objects.Contents.map(object => object.Key?.split("/")[1] as string);
+    }
+
+    async upload(filename: string, readable: Readable, namespace?: string): Promise<void> {
+        const upload = new Upload({
+            params: {
+                Bucket: this.bucketName,
+                Key: this.getPath(filename, namespace),
+                Body: readable,
+            },
+            client: this.fs,
+            queueSize: 3,
+        });
+        await upload.done();
+    }
+
+}

@@ -1,0 +1,11 @@
+export * from './fs.module';
+
+export {
+    FilesystemService
+} from './lib/Filesystem.service';
+
+export {FilesystemAdapter} from './lib/adapters/adapter';
+
+export {LocalFilesystemAdapter} from './lib/adapters/LocalFilesystem.adapter';
+export {S3FilesystemAdapter} from './lib/adapters/S3Filesystem.adapter';
+

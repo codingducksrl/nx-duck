@@ -1,0 +1,19 @@
+import { Readable } from 'stream';
+
+export interface FilesystemAdapter {
+    upload(filename: string, readable: Readable, namespace?: string): Promise<void>;
+
+    download(filename: string, namespace?: string): Promise<Readable>;
+
+    delete(filename: string, namespace?: string): Promise<void>;
+
+    exists(filename: string, namespace?: string): Promise<boolean>;
+
+    list(namespace?: string): Promise<string[]>;
+
+    getURL(filename: string, namespace?: string): Promise<string>;
+
+    getSignedURL(filename: string, expiresIn: number, namespace?: string, contentDisposition?: string): Promise<string>;
+
+    getIdentifier(): string;
+}

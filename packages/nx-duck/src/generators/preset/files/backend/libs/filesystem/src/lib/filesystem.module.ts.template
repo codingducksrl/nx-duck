@@ -1,0 +1,14 @@
+import { Global, Module } from '@nestjs/common';
+import { ConfigurableModuleClass } from '../config.module-definition';
+import { FilesystemService } from './Filesystem.service';
+import { FilesystemController } from './filesystem.controller';
+
+@Global()
+@Module({
+    controllers: [FilesystemController],
+    providers: [FilesystemService],
+    exports: [FilesystemService],
+})
+export class FilesystemModule extends ConfigurableModuleClass{
+
+}

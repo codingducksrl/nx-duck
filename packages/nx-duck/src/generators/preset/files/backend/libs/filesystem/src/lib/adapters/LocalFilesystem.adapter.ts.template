@@ -1,0 +1,80 @@
+import { FilesystemAdapter } from './adapter';
+import * as fs from 'fs';
+import * as path from 'path';
+import { promisify } from 'util';
+import { Readable } from 'stream';
+
+export class LocalFilesystemAdapter implements FilesystemAdapter {
+
+    constructor(private readonly root: string, private readonly namespaces: string[] = [], private readonly name?: string) {
+        if (!fs.existsSync(root)) {
+            fs.mkdirSync(root, {recursive: true})
+        }
+        namespaces.forEach(namespace => {
+            const namespacePath = path.join(root, namespace);
+            if (!fs.existsSync(namespacePath)) {
+                fs.mkdirSync(namespacePath, {recursive: true})
+            }
+        });
+    }
+
+    getIdentifier(): string {
+        return this.name ?? "local";
+    }
+
+    getSignedURL(filename: string, expiresIn: number, namespace?: string): Promise<string> {
+        throw new Error("Method not implemented.");
+    }
+
+    private getPath(filename: string, namespace?: string): string {
+        if (namespace) {
+            return path.join(this.root, namespace, filename);
+        }
+        return path.join(this.root, filename);
+    }
+
+    async delete(filename: string, namespace?: string): Promise<void> {
+        const filePath = this.getPath(filename, namespace);
+        if (await this.exists(filename, namespace)) {
+            const unlink = promisify(fs.unlink);
+            await unlink(filePath);
+        }
+    }
+
+    async download(filename: string, namespace?: string): Promise<Readable> {
+        const filePath = this.getPath(filename, namespace);
+        if (!await this.exists(filename, namespace)) {
+            throw new Error("File does not exist")
+        }
+        return fs.createReadStream(filePath)
+    }
+
+    async exists(filename: string, namespace?: string): Promise<boolean> {
+        const filePath = this.getPath(filename, namespace);
+        const exists = promisify(fs.exists);
+        return await exists(filePath)
+    }
+
+    async getURL(filename: string, namespace?: string): Promise<string> {
+        return Promise.resolve(`/file/${namespace}/${filename}`);
+    }
+
+    async list(namespace?: string): Promise<string[]> {
+        const filePath = namespace ? path.join(this.root, namespace) : this.root;
+        const readdir = promisify(fs.readdir);
+        return await readdir(filePath);
+    }
+
+    async upload(filename: string, readable: Readable, namespace?: string): Promise<void> {
+        const filePath = this.getPath(filename, namespace);
+        const dirname = path.dirname(filePath);
+        const mkdir = promisify(fs.mkdir);
+        const exists = promisify(fs.exists);
+        if (!await exists(dirname)) {
+            await mkdir(dirname, {recursive: true})
+        }
+        const write = fs.createWriteStream(filePath)
+        readable.pipe(write)
+    }
+
+}

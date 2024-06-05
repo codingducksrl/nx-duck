@@ -1,0 +1,47 @@
+import { Module } from '@nestjs/common';
+import { FilesystemModule } from './lib/filesystem.module';
+import {SettingsService} from "@<%= workspaceName %>/settings";
+import { S3FilesystemAdapter } from './lib/adapters/S3Filesystem.adapter';
+import { LocalFilesystemAdapter } from './lib/adapters/LocalFilesystem.adapter';
+
+@Module({
+    imports: [
+        FilesystemModule.forRootAsync({
+            useFactory: (settings: SettingsService) => {
+
+                function getDefaultBackend(){
+                    switch (settings.filesystem) {
+                        case 's3':
+                            return new S3FilesystemAdapter(
+                                settings.s3.bucket,
+                                {
+                                    region: settings.s3.region,
+                                },
+                                'default'
+                            );
+                        case 'local':
+                            return new LocalFilesystemAdapter(
+                                'uploads',
+                                [],
+                                'default'
+                            );
+                        default:
+                            throw new Error('Invalid filesystem service');
+                    }
+                }
+
+                return {
+                    backends: [
+                        getDefaultBackend(),
+                    ],
+                    defaultBackendName: "default"
+                };
+            },
+            inject: [SettingsService],
+        }),
+    ],
+    controllers: [],
+    providers: [],
+    exports: []
+})
+export class FsModule {}

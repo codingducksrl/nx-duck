@@ -1,0 +1,21 @@
+import { Controller } from '@nestjs/common';
+import { FilesystemService } from './Filesystem.service';
+
+@Controller("file")
+export class FilesystemController {
+
+    constructor(
+        private readonly filesystemService: FilesystemService,
+    ) {
+    }
+
+    // @SetMetadata("isPublic", true)
+    // @Header('Cache-Control', 'max-age=172800') // 2 days
+    // @Get(":namespace/:filename")
+    // async getData(@Param("namespace") namespace: string, @Param("filename") filename: string) {
+    // }
+
+
+
+}
+

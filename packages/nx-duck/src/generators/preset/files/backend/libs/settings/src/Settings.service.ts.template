@@ -55,4 +55,20 @@ export class SettingsService {
         }
     }
     <% } %>
+
+    <% if(fs) { %>
+
+        get filesystem() {
+            return this.config.get<string>('FILESYSTEM_SERVICE', 'local') as
+                | 'local'
+                | 's3';
+        }
+
+        get s3() {
+            return {
+                bucket: this.config.getOrThrow<string>('FILESYSTEM_S3_BUCKET'),
+                region: this.config.get<string>('FILESYSTEM_S3_REGION')
+            };
+        }
+    <% } %>
 }

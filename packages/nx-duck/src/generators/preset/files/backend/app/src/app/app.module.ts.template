@@ -10,6 +10,9 @@ import { DbModule } from '@<%= workspaceName %>/db';
 <% if(email) { %>
 import { EmailModule } from '@<%= workspaceName %>/email';
 <% } %>
+<% if(fs) { %>
+import { FsModule } from '@<%= workspaceName %>/filesystem';
+<% } %>
 
 @Module({
     imports: [
@@ -18,6 +21,9 @@ import { EmailModule } from '@<%= workspaceName %>/email';
         <% } %>
         <% if(email) { %>
         EmailModule,
+        <% } %>
+        <% if(email) { %>
+        FsModule,
         <% } %>
         HealthModule
     ],

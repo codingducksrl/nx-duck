@@ -1,0 +1,20 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { FilesystemModuleOptions, MODULE_OPTIONS_TOKEN } from '../config.module-definition';
+import { FilesystemAdapter } from './adapters/adapter';
+
+@Injectable()
+export class FilesystemService {
+    constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: FilesystemModuleOptions) {
+
+    }
+
+    public backend(backendName?: string): FilesystemAdapter {
+        const name = backendName ?? this.options.defaultBackendName;
+        const adapter = this.options.backends.find(backend => backend.getIdentifier() === name);
+        if (!adapter) {
+            throw new Error(`Backend ${backendName} not found`);
+        }
+        return adapter;
+    }
+
+}

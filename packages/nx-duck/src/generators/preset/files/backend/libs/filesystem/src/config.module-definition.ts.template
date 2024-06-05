@@ -1,0 +1,10 @@
+import { ConfigurableModuleBuilder } from '@nestjs/common';
+import { FilesystemAdapter } from './lib/adapters/adapter';
+
+export type FilesystemModuleOptions = {
+    defaultBackendName: string,
+    backends: FilesystemAdapter[]
+}
+
+export const { ConfigurableModuleClass, ASYNC_OPTIONS_TYPE, MODULE_OPTIONS_TOKEN } =
+    new ConfigurableModuleBuilder<FilesystemModuleOptions>().setClassMethodName('forRoot').build();
