@@ -1,54 +1,66 @@
 {
-  "name": "create-nx-duck",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/create-nx-duck/bin",
-  "projectType": "library",
-  "release": {
-    "version": {
-      "generatorOptions": {
-        "packageRoot": "dist/{projectRoot}",
-        "currentVersionResolver": "git-tag"
-      }
-    }
-  },
-  "tags": [],
-  "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/packages/create-nx-duck",
-        "main": "packages/create-nx-duck/bin/index.ts",
-        "tsConfig": "packages/create-nx-duck/tsconfig.lib.json",
-        "assets": [
-          "packages/create-nx-duck/*.md"
-        ]
-      }
+    "name": "create-nx-duck",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/create-nx-duck/bin",
+    "projectType": "library",
+    "release": {
+        "version": {
+            "generatorOptions": {
+                "packageRoot": "dist/{projectRoot}",
+                "currentVersionResolver": "git-tag"
+            }
+        }
     },
-    "nx-release-publish": {
-      "dependsOn": [
-        "build"
-      ],
-      "options": {
-        "packageRoot": "dist/{projectRoot}"
-      }
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "options": {
+                "outputPath": "dist/packages/create-nx-duck",
+                "main": "packages/create-nx-duck/bin/index.ts",
+                "tsConfig": "packages/create-nx-duck/tsconfig.lib.json",
+                "assets": [
+                    "packages/create-nx-duck/*.md"
+                ]
+            }
+        },
+        "publish": {
+            "dependsOn": [
+                "build"
+            ],
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "npm publish"
+                ],
+                "cwd": "./dist/packages/create-nx-duck"
+            }
+        },
+        "nx-release-publish": {
+            "dependsOn": [
+                "build"
+            ],
+            "options": {
+                "packageRoot": "dist/{projectRoot}"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+            ],
+            "options": {
+                "jestConfig": "packages/create-nx-duck/jest.config.ts"
+            }
+        }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
-      "options": {
-        "jestConfig": "packages/create-nx-duck/jest.config.ts"
-      }
-    }
-  },
-  "implicitDependencies": [
-    "nx-duck"
-  ]
+    "implicitDependencies": [
+        "nx-duck"
+    ]
 }

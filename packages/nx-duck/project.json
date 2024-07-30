@@ -55,6 +55,18 @@
                 "packageRoot": "dist/{projectRoot}"
             }
         },
+        "publish": {
+            "dependsOn": [
+                "build"
+            ],
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "npm publish"
+                ],
+                "cwd": "./dist/packages/nx-duck"
+            }
+        },
         "lint": {
             "executor": "@nx/eslint:lint"
         },
