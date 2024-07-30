@@ -1,12 +1,13 @@
 {
     "name": "nx-duck",
-    "version": "0.0.78",
+    "version": "0.0.82",
     "dependencies": {
         "@nx/devkit": "19.1.2",
         "tslib": "^2.3.0",
-        "@nx/react": "19.1.2",
-        "@nx/angular": "19.1.2",
         "@nx/eslint": "19.1.2",
+        "@nx/nest": "^19.1.2",
+        "@nx/next": "^19.3.2",
+        "@nx/react": "19.1.2",
         "@nx-tools/nx-prisma": "6.0.1",
         "inquirer": "^8.2.5"
     },

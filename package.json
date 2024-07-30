@@ -10,6 +10,7 @@
       "@nx/devkit": "19.1.2",
       "@nx/eslint": "19.1.2",
       "@nx/nest": "^19.1.2",
+      "@nx/next": "^19.3.2",
       "@nx/react": "19.1.2",
       "create-nx-workspace": "19.1.2",
       "inquirer": "^8.2.5",

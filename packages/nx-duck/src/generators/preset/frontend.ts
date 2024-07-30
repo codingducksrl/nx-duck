@@ -1,5 +1,6 @@
 import { Configuration } from './prompts.types';
 import { applicationGenerator, libraryGenerator, storybookConfigurationGenerator } from '@nx/react';
+import { applicationGenerator as nextApplicationGenerator } from '@nx/next';
 import { Linter } from '@nx/eslint';
 import { generateFiles, Tree, updateJson } from '@nx/devkit';
 import * as path from 'node:path';
@@ -15,31 +16,54 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
     const applicationName = configuration.type.includes('backend') ? 'frontend' : 'app';
     const applicationPath = getFrontendApplicationPath(configuration);
 
-    await applicationGenerator(tree, {
-        name: applicationName,
-        style: 'tailwind',
-        linter: Linter.EsLint,
-        bundler: 'vite',
-        skipFormat: true,
-        unitTestRunner: 'jest',
-        e2eTestRunner: 'none',
-        projectNameAndRootFormat: 'as-provided',
-        directory: applicationPath
-    });
+    if (configuration.frontend.framework === 'react') {
+        await applicationGenerator(tree, {
+            name: applicationName,
+            style: 'tailwind',
+            linter: Linter.EsLint,
+            bundler: 'vite',
+            skipFormat: true,
+            unitTestRunner: 'jest',
+            e2eTestRunner: 'none',
+            projectNameAndRootFormat: 'as-provided',
+            directory: applicationPath
+        });
 
-    tree.delete(`${applicationPath}/src/app`);
+        tree.delete(`${applicationPath}/src/app`);
 
-    updateJson(tree, 'package.json', (pkgJson) => {
+        updateJson(tree, 'package.json', (pkgJson) => {
 
-        pkgJson.devDependencies['react-router-dom'] = '^6.23.1';
+            pkgJson.devDependencies['react-router-dom'] = '^6.23.1';
 
-        return pkgJson;
-    });
+            return pkgJson;
+        });
 
-    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'app'), applicationPath, {
-        workspaceName: workspaceName,
-        translations: configuration.frontend.services.includes('translations')
-    });
+        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'app'), applicationPath, {
+            workspaceName: workspaceName,
+            translations: configuration.frontend.services.includes('translations')
+        });
+    }
+
+    if (configuration.frontend.framework === 'next') {
+        await nextApplicationGenerator(tree, {
+            name: applicationName,
+            style: 'tailwind',
+            linter: Linter.EsLint,
+            unitTestRunner: 'jest',
+            e2eTestRunner: 'none',
+            projectNameAndRootFormat: 'as-provided',
+            directory: applicationPath
+        });
+
+        tree.delete(`${applicationPath}/src/app`);
+
+        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'next'), applicationPath, {
+            workspaceName: workspaceName,
+            translations: configuration.frontend.services.includes('translations')
+        });
+    }
+
+
 
     await generateSettings(tree, libsRoot);
 

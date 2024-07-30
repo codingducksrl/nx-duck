@@ -16,6 +16,16 @@ export async function promptConfiguration() {
                 ]
             },
             {
+                type: 'list',
+                name: 'frontend.framework',
+                message: 'What frontend framework do you want to use?',
+                choices: [
+                    { name: 'React', value: 'react', checked: true },
+                    { name: 'NextJS', value: 'next', checked: false }
+                ],
+                when: (answers) => answers.type.includes('frontend')
+            },
+            {
                 type: 'checkbox',
                 name: 'frontend.services',
                 message: 'What additional frontend libraries do you want?',

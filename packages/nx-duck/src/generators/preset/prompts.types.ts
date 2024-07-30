@@ -8,6 +8,7 @@ export type Configuration = {
         deployment: 'aws-ecr' | false;
     },
     frontend: {
+        framework: 'react' | 'next';
         services: ('ui' | 'sdk' | 'translations')[];
         deployment: 'aws-s3' | false;
     }
