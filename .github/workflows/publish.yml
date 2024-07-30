@@ -18,6 +18,6 @@ jobs:
                     registry-url: 'https://registry.npmjs.org'
                     cache: 'npm'
             -   run: npm ci
-            -   run: nx run-many -t publish --provenance --access public
+            -   run: npx nx run-many -t publish --provenance --access public
                 env:
                     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
