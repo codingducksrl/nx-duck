@@ -1,6 +1,6 @@
 {
     "name": "@codingducksrl/create-nx-duck",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "dependencies": {
         "create-nx-workspace": "19.1.2"
     },
@@ -9,5 +9,8 @@
     "typings": "./src/index.d.ts",
     "bin": {
         "create-nx-duck": "./bin/index.js"
+    },
+    "repository": {
+        "url": "https://github.com/codingducksrl/nx-duck"
     }
 }
