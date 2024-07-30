@@ -15,7 +15,7 @@ async function main() {
   const presetVersion = 'latest';
 
   // TODO: update below to customize the workspace
-  const { directory } = await createWorkspace(`nx-duck@${presetVersion}`, {
+    const { directory } = await createWorkspace(`@codingducksrl/nx-duck@${presetVersion}`, {
     name,
     nxCloud: 'skip',
     packageManager: 'npm'
