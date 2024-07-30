@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './health/health.module';
+import { SettingsModule } from '@<%= workspaceName %>/settings';
 
 <% if(db) { %>
 import { DbModule } from '@<%= workspaceName %>/db';
@@ -13,6 +14,7 @@ import { EmailModule } from '@<%= workspaceName %>/email';
 <% if(fs) { %>
 import { FsModule } from '@<%= workspaceName %>/filesystem';
 <% } %>
+
 
 @Module({
     imports: [
@@ -25,7 +27,8 @@ import { FsModule } from '@<%= workspaceName %>/filesystem';
         <% if(email) { %>
         FsModule,
         <% } %>
-        HealthModule
+        HealthModule,
+        SettingsModule
     ],
     controllers: [AppController],
     providers: [AppService],

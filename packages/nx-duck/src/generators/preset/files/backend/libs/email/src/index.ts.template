@@ -2,7 +2,7 @@ import {Module} from '@nestjs/common';
 import {MailerModule} from "@nestjs-modules/mailer";
 import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import * as process from "process";
-import {EmailService} from "./Email.service.ts";
+import {EmailService} from "./Email.service";
 import {SettingsService} from "@<%= workspaceName %>/settings";
 import {getSesTransport, getSmtpTransport} from "./transports";
 

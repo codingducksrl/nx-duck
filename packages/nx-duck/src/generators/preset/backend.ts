@@ -41,6 +41,8 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
         '@nestjs/config': '^3.2.2',
         '@nestjs/terminus': '^10.2.3',
         '@nestjs/axios': '^3.0.2',
+        'class-validator': '^0.14.1',
+        'class-transformer': '^0.5.1',
         'axios': '^1.7.2'
     }, {});
 
@@ -78,6 +80,8 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
         email: configuration.backend.services.includes('email'),
         fs: configuration.backend.services.includes('fs')
     });
+
+    tree.delete('libs/settings/src/lib');
 
 
     if (configuration.backend.database) {
