@@ -35,7 +35,7 @@ COPY --from=build /app/package.json backend/package.json
 COPY --from=build /app/package-lock.json backend/package-lock.json
 COPY --from=build /app/dist/<%= applicationPath %> backend
 <% if(db) { %>
-COPY --from=build /app/libs/db/prisma/* backend/
+COPY --from=build /app/libs/db/prisma/. backend/
 <% } %>
 <% if(email) { %>
 COPY --from=build /app/dist/emails dist/emails
