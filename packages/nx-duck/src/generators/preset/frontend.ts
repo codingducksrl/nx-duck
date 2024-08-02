@@ -74,7 +74,7 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
     await generateSettings(tree, libsRoot);
 
     if (configuration.frontend.services.includes('ui')) {
-        await generateUi(tree, libsRoot, configuration.frontend.framework);
+        await generateUi(tree, libsRoot, configuration.frontend.framework, applicationPath);
     }
 
     if (configuration.frontend.services.includes('translations')) {
@@ -162,7 +162,7 @@ async function generateTranslations(tree: Tree, libsRoot: string) {
     generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'translations'), `${libsRoot}/translations`, {});
 }
 
-async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'react') {
+async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'react', applicationPath: string) {
     await libraryGenerator(tree, {
         name: 'ui',
         style: 'tailwind',
@@ -207,7 +207,9 @@ async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'rea
         return pkgJson;
     });
 
-    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'ui'), `${libsRoot}/ui`, {});
+    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'ui'), `${libsRoot}/ui`, {
+        applicationPath: applicationPath
+    });
 
     const mainStorybookTs = `${libsRoot}/ui/.storybook/main.ts`;
     const contents = tree.read(mainStorybookTs).toString();
