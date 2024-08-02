@@ -1,5 +1,11 @@
 import { Configuration } from './prompts.types';
-import { applicationGenerator, libraryGenerator, storybookConfigurationGenerator } from '@nx/react';
+import {
+    applicationGenerator,
+    libraryGenerator,
+    setupTailwindGenerator,
+    storybookConfigurationGenerator
+} from '@nx/react';
+import { configurationGenerator } from '@nx/storybook';
 import { applicationGenerator as nextApplicationGenerator } from '@nx/next';
 import { Linter } from '@nx/eslint';
 import { generateFiles, Tree, updateJson } from '@nx/devkit';
@@ -68,7 +74,7 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
     await generateSettings(tree, libsRoot);
 
     if (configuration.frontend.services.includes('ui')) {
-        await generateUi(tree, libsRoot);
+        await generateUi(tree, libsRoot, configuration.frontend.framework);
     }
 
     if (configuration.frontend.services.includes('translations')) {
@@ -156,7 +162,7 @@ async function generateTranslations(tree: Tree, libsRoot: string) {
     generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'translations'), `${libsRoot}/translations`, {});
 }
 
-async function generateUi(tree: Tree, libsRoot: string) {
+async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'react') {
     await libraryGenerator(tree, {
         name: 'ui',
         style: 'tailwind',
@@ -167,13 +173,29 @@ async function generateUi(tree: Tree, libsRoot: string) {
         strict: true
     });
 
-    await storybookConfigurationGenerator(tree, {
-        project: 'ui',
-        generateStories: true,
-        generateCypressSpecs: false,
-        interactionTests: false,
-        configureStaticServe: false
-    });
+    if (framework === 'next') {
+        await configurationGenerator(tree, {
+            project: 'ui',
+            tsConfiguration: true,
+            linter: Linter.EsLint,
+            interactionTests: false,
+            uiFramework: '@storybook/nextjs'
+        });
+        await setupTailwindGenerator(tree, {
+            project: 'ui',
+            skipFormat: false
+        });
+    }
+
+    if (framework === 'react') {
+        await storybookConfigurationGenerator(tree, {
+            project: 'ui',
+            generateStories: true,
+            generateCypressSpecs: false,
+            interactionTests: false,
+            configureStaticServe: false
+        });
+    }
 
     updateJson(tree, 'package.json', (pkgJson) => {
 
