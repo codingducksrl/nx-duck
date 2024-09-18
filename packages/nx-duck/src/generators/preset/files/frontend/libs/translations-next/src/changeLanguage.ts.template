@@ -1,0 +1,9 @@
+"use server"
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
+
+export async function changeLanguage(lang: string,path:string = "/"){
+    cookies().set("NEXT_LOCALE", lang)
+    const correctedPath = path.startsWith("/") ? path : `/${path}`
+    redirect(`/${lang}${correctedPath}`)
+}

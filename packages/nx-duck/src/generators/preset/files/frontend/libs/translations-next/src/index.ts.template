@@ -1,0 +1,10 @@
+import {DefaultNamespace, TranslationResources as TR} from "./types";
+
+export type TranslationResources = TR;
+export const DefaultTranslationNamespace = DefaultNamespace;
+
+export {useTranslation as useTranslationClient} from './client';
+export {useTranslation} from './server';
+export {translationMiddleware} from "./middleware";
+export {changeLanguage} from "./changeLanguage";
+export {languages as SupportedLanguages} from "./settings";

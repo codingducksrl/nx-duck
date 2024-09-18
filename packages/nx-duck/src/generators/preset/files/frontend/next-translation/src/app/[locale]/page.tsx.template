@@ -1,0 +1,48 @@
+import * as React from 'react';
+import {Suspense} from 'react';
+import Link from "next/link";
+import {Test} from "./Test";
+import {useTranslation} from '@<%= workspaceName %>/translations';
+import {ChangeLanguage} from "../../components/ChangeLanguage";
+
+
+export default async function Index({params: {locale}}: { params: { locale: string } }) {
+
+    const {t} = await useTranslation(locale)
+
+    /*
+     * Replace the elements below with your own.
+     *
+     * Note: The corresponding styles are in the ./index.tailwind file.
+     */
+    return (
+        <Suspense>
+            <div className={'w-screen h-screen text-left'}>
+                <h1>Current language: {locale}</h1>
+
+                <h1>{t('hello')}</h1>
+
+                <Test/>
+
+                <h1>
+                    Go to:
+                    <strong>
+                        {["it", "en"].filter((l) => locale !== l).map((l, index) => {
+                            return (
+                                <span key={l}>
+                            {index > 0 && (' or ')}
+                                    <ChangeLanguage lang={l}/>
+                          </span>
+                            )
+                        })}
+                    </strong>
+                </h1>
+
+
+                <Link href={`/${locale}/second-page`}>
+                    second page
+                </Link>
+            </div>
+        </Suspense>
+    );
+}

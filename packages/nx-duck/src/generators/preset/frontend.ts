@@ -63,10 +63,19 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
 
         tree.delete(`${applicationPath}/src/app`);
 
-        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'next'), applicationPath, {
-            workspaceName: workspaceName,
-            translations: configuration.frontend.services.includes('translations')
-        });
+        if (configuration.frontend.services.includes('translations')) {
+            generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'next-translation'), applicationPath, {
+                workspaceName: workspaceName,
+                translations: true
+            });
+        } else {
+            generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'next'), applicationPath, {
+                workspaceName: workspaceName,
+                translations: false
+            });
+        }
+
+
     }
 
 
@@ -78,7 +87,7 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
     }
 
     if (configuration.frontend.services.includes('translations')) {
-        await generateTranslations(tree, libsRoot);
+        await generateTranslations(tree, libsRoot, configuration.frontend.framework);
     }
 
     if (configuration.frontend.services.includes('sdk')) {
@@ -138,7 +147,7 @@ async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string) 
     });
 }
 
-async function generateTranslations(tree: Tree, libsRoot: string) {
+async function generateTranslations(tree: Tree, libsRoot: string, framework: 'next' | 'react') {
     await libraryGenerator(tree, {
         name: 'translations',
         style: 'none',
@@ -156,10 +165,23 @@ async function generateTranslations(tree: Tree, libsRoot: string) {
         pkgJson.devDependencies['i18next-resources-to-backend'] = '^1.2.1';
         pkgJson.devDependencies['react-i18next'] = '^14.1.2';
 
+        if (framework === 'next') {
+            pkgJson.dependencies['next-i18n-router'] = '^5.5.1';
+            pkgJson.dependencies['negotiator'] = '^0.6.3';
+            pkgJson.dependencies['accept-language'] = '^3.0.20';
+            pkgJson.dependencies['@formatjs/intl-localematcher'] = '^0.5.4';
+            pkgJson.devDependencies['@types/negotiator'] = '^0.6.3';
+        }
+
         return pkgJson;
     });
 
-    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'translations'), `${libsRoot}/translations`, {});
+    if (framework === 'next') {
+        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'translations-next'), `${libsRoot}/translations`, {});
+    } else {
+        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'translations'), `${libsRoot}/translations`, {});
+    }
+
 }
 
 async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'react', applicationPath: string) {

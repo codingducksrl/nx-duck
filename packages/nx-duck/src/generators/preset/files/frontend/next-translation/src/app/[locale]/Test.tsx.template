@@ -1,0 +1,19 @@
+"use client"
+
+
+import {useTranslationClient} from '@<%= workspaceName %>/translations';
+
+export type TestProps = {
+    //
+}
+
+export const Test = (props: TestProps) => {
+
+    const {t} = useTranslationClient()
+
+    return (
+        <div>
+            <h1>I'm a client component {t("hello")}</h1>
+        </div>
+    )
+}

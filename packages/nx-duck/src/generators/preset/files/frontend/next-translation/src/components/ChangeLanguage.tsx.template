@@ -1,0 +1,12 @@
+"use client"
+import * as React from "react";
+import {changeLanguage} from '@<%= workspaceName %>/translations';
+
+export function ChangeLanguage({lang}: {lang:string}) {
+
+    return <button onClick={()=>{
+        changeLanguage(lang)
+    }}>
+        {lang}
+    </button>
+}

@@ -1,0 +1,7 @@
+import {i18nRouter} from "next-i18n-router";
+import {NextRequest} from "next/server";
+import {i18nConfig} from "./settings";
+
+export function translationMiddleware(request: NextRequest) {
+    return i18nRouter(request, i18nConfig);
+}
