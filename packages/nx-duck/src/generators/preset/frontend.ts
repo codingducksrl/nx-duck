@@ -91,7 +91,7 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
     }
 
     if (configuration.frontend.services.includes('sdk')) {
-        await generateSdk(tree, libsRoot, workspaceName);
+        await generateSdk(tree, libsRoot, workspaceName, configuration.frontend.framework);
     }
 }
 
@@ -109,7 +109,7 @@ async function generateSettings(tree: Tree, libsRoot: string) {
     generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'config'), `${libsRoot}/config`, {});
 }
 
-async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string) {
+async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string, framework: 'next' | 'react') {
     await libraryGenerator(tree, {
         name: 'sdk',
         style: 'none',
@@ -137,14 +137,25 @@ async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string) 
     updateJson(tree, 'package.json', (pkgJson) => {
 
         pkgJson.devDependencies['openapi-typescript'] = '^6.7.6';
-        pkgJson.devDependencies['axios'] = '^1.7.2';
+
+        if (framework === 'next') {
+            pkgJson.dependencies['ky'] = '^1.7.2';
+        } else {
+            pkgJson.devDependencies['axios'] = '^1.7.2';
+        }
 
         return pkgJson;
     });
 
-    generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'sdk'), `${libsRoot}/sdk`, {
-        workspaceName: workspaceName
-    });
+    if (framework === 'next') {
+        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'sdk-next'), `${libsRoot}/sdk`, {
+            workspaceName: workspaceName
+        });
+    } else {
+        generateFiles(tree, path.join(__dirname, 'files', 'frontend', 'libs', 'sdk'), `${libsRoot}/sdk`, {
+            workspaceName: workspaceName
+        });
+    }
 }
 
 async function generateTranslations(tree: Tree, libsRoot: string, framework: 'next' | 'react') {

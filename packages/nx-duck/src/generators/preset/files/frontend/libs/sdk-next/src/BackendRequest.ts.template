@@ -1,0 +1,33 @@
+"use server";
+
+import ky from "ky";
+import { Settings } from '@<%= workspaceName %>/config';
+import {cookies} from "next/headers";
+
+
+export async function getHttp() {
+    const token = await getAccessToken()
+
+    if (!token) {
+        throw new Error("Access token not found")
+    }
+
+    return ky.create({
+        prefixUrl: Settings.apiUrl,
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    });
+}
+
+export async function setAccessToken(token: string) {
+    cookies().set("access_token", token);
+}
+
+export async function getAccessToken() {
+    return cookies().get("access_token")?.value;
+}
+
+export async function removeAccessToken() {
+    cookies().delete("access_token");
+}

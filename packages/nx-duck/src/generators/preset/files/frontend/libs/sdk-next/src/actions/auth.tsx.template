@@ -1,0 +1,20 @@
+"use server";
+
+import { Settings } from '@<%= workspaceName %>/config';
+import {redirect} from "next/navigation";
+import {OkResponse} from "../helper";
+import {getHttp, removeAccessToken} from "../BackendRequest";
+
+
+
+export async function me() {
+    const http = await getHttp();
+
+    return http.get("auth/me").json<OkResponse<"/auth/me", "get">>()
+}
+
+
+export async function logout() {
+    await removeAccessToken();
+    redirect("/")
+}
