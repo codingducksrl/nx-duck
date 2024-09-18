@@ -1,6 +1,5 @@
 import './global.css';
 import {dir} from "i18next";
-import { languages } from '../i18n/settings'
 import {SupportedLanguages} from '@<%= workspaceName %>/translations';
 
 export const metadata = {
