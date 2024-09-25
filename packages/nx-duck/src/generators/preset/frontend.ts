@@ -126,7 +126,7 @@ async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string, 
             'executor': 'nx:run-commands',
             'options': {
                 'commands': [
-                    'npx openapi-typescript http://localhost:3000/docs-yaml -o ./fe-libs/sdk/src/schema.d.ts'
+                    `npx openapi-typescript http://localhost:3000/docs-yaml -o ${libsRoot}/sdk/src/schema.d.ts`
                 ]
             }
         };
