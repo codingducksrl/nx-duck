@@ -75,7 +75,7 @@ export async function presetGenerator(
         tree.delete('.github/workflows/build-and-push-backend.yml');
     }
 
-    if (!deployFrontend && !deployBackend) {
+    if (!deployFrontend && !deployBackend && !deployLambda) {
         tree.delete('.github/workflows/production.yml');
         tree.delete('.github/workflows/staging.yml');
     } else {
