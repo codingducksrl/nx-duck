@@ -31,7 +31,6 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
             skipFormat: true,
             unitTestRunner: 'jest',
             e2eTestRunner: 'none',
-            projectNameAndRootFormat: 'as-provided',
             directory: applicationPath
         });
 
@@ -57,7 +56,6 @@ export async function createFrontend(tree: Tree, configuration: Configuration, w
             linter: Linter.EsLint,
             unitTestRunner: 'jest',
             e2eTestRunner: 'none',
-            projectNameAndRootFormat: 'as-provided',
             directory: applicationPath
         });
 
@@ -101,7 +99,6 @@ async function generateSettings(tree: Tree, libsRoot: string) {
         style: 'none',
         linter: Linter.EsLint,
         unitTestRunner: 'jest',
-        projectNameAndRootFormat: 'as-provided',
         directory: `${libsRoot}/config`,
         strict: true
     });
@@ -115,7 +112,6 @@ async function generateSdk(tree: Tree, libsRoot: string, workspaceName: string, 
         style: 'none',
         linter: Linter.EsLint,
         unitTestRunner: 'jest',
-        projectNameAndRootFormat: 'as-provided',
         directory: `${libsRoot}/sdk`,
         strict: true
     });
@@ -164,7 +160,6 @@ async function generateTranslations(tree: Tree, libsRoot: string, framework: 'ne
         style: 'none',
         linter: Linter.EsLint,
         unitTestRunner: 'jest',
-        projectNameAndRootFormat: 'as-provided',
         directory: `${libsRoot}/translations`,
         strict: true
     });
@@ -201,7 +196,6 @@ async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'rea
         style: 'tailwind',
         linter: Linter.EsLint,
         unitTestRunner: 'jest',
-        projectNameAndRootFormat: 'as-provided',
         directory: `${libsRoot}/ui`,
         strict: true
     });
@@ -224,7 +218,6 @@ async function generateUi(tree: Tree, libsRoot: string, framework: 'next' | 'rea
         await storybookConfigurationGenerator(tree, {
             project: 'ui',
             generateStories: true,
-            generateCypressSpecs: false,
             interactionTests: false,
             configureStaticServe: false
         });

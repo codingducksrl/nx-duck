@@ -1,8 +1,10 @@
 import { Configuration } from './prompts.types';
 import { applicationGenerator, libraryGenerator } from '@nx/nest';
+import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
 import { Linter } from '@nx/eslint';
 import { addDependenciesToPackageJson, generateFiles, Tree, updateJson } from '@nx/devkit';
 import * as path from 'node:path';
+import { lambdaGenerator } from '../lambda/generator';
 
 import { configurationGenerator as prismaGenerator } from '../prisma/generator';
 import { runCommandsGenerator } from '@nx/workspace';
@@ -13,7 +15,38 @@ export function getBackendApplicationPath(configuration: Configuration) {
 
 export async function createBackend(tree: Tree, configuration: Configuration, workspaceName: string) {
 
+    if (configuration.backend.framework === 'nest') {
+        await createNestJS(tree, configuration, workspaceName);
+    }
 
+    if (configuration.backend.framework === 'lambda') {
+        await createLambda(tree, configuration, workspaceName);
+    }
+}
+
+async function createLambda(tree: Tree, configuration: Configuration, workspaceName: string) {
+    await lambdaGenerator(tree, {
+        name: 'lambda'
+    });
+
+    await jsLibraryGenerator(tree, {
+        name: 'settings',
+        linter: Linter.EsLint,
+        unitTestRunner: 'none',
+        strict: true,
+        buildable: true,
+        directory: 'libs/settings'
+    });
+
+    // generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'settings'), 'libs/settings', {
+    //     email: configuration.backend.services.includes('email'),
+    //     fs: configuration.backend.services.includes('fs')
+    // });
+
+    // tree.delete('libs/settings/src/lib');
+}
+
+async function createNestJS(tree: Tree, configuration: Configuration, workspaceName: string) {
     const applicationPath = getBackendApplicationPath(configuration);
 
     await applicationGenerator(tree, {
@@ -22,7 +55,6 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
         unitTestRunner: 'jest',
         e2eTestRunner: 'none',
         strict: true,
-        projectNameAndRootFormat: 'as-provided',
         directory: applicationPath
     });
 
@@ -70,7 +102,6 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
         name: 'settings',
         linter: Linter.EsLint,
         unitTestRunner: 'none',
-        projectNameAndRootFormat: 'as-provided',
         strict: true,
         buildable: true,
         directory: 'libs/settings'
@@ -102,7 +133,6 @@ async function createFilesystem(tree: Tree, configuration: Configuration, worksp
         name: 'filesystem',
         linter: Linter.EsLint,
         unitTestRunner: 'none',
-        projectNameAndRootFormat: 'as-provided',
         strict: true,
         buildable: true,
         directory: 'libs/filesystem'
@@ -127,7 +157,6 @@ async function createEmail(tree: Tree, configuration: Configuration, workspaceNa
         name: 'email',
         linter: Linter.EsLint,
         unitTestRunner: 'none',
-        projectNameAndRootFormat: 'as-provided',
         strict: true,
         buildable: true,
         directory: 'libs/email'
@@ -176,7 +205,6 @@ async function createDatabase(tree: Tree, configuration: Configuration, applicat
         name: 'db',
         linter: Linter.EsLint,
         unitTestRunner: 'none',
-        projectNameAndRootFormat: 'as-provided',
         strict: true,
         buildable: true,
         directory: 'libs/db'

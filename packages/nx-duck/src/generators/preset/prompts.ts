@@ -17,6 +17,16 @@ export async function promptConfiguration() {
             },
             {
                 type: 'list',
+                name: 'backend.framework',
+                message: 'What backend framework do you want to use?',
+                choices: [
+                    { name: 'NestJS', value: 'nest', checked: true },
+                    { name: 'AWS lambda', value: 'lambda', checked: false }
+                ],
+                when: (answers) => answers.type.includes('backend')
+            },
+            {
+                type: 'list',
                 name: 'frontend.framework',
                 message: 'What frontend framework do you want to use?',
                 choices: [

@@ -1,15 +1,15 @@
 {
     "name": "@codingducksrl/nx-duck",
-    "version": "0.3.1",
+    "version": "0.3.5",
     "dependencies": {
-        "@nx/devkit": "19.5.6",
+        "@nx/devkit": "20.3.1",
         "tslib": "^2.3.0",
-        "@nx/eslint": "19.5.6",
-        "@nx/nest": "19.5.6",
-        "@nx/next": "19.5.6",
-        "@nx/react": "19.5.6",
-        "@nx/storybook": "^19.5.6",
-        "@nx-tools/nx-prisma": "6.0.1",
+        "@nx/eslint": "20.3.1",
+        "@nx/nest": "20.3.1",
+        "@nx/next": "20.3.1",
+        "@nx/react": "20.3.1",
+        "@nx/storybook": "20.3.1",
+        "@nx-tools/nx-prisma": "6.5.0",
         "inquirer": "^8.2.5"
     },
     "repository": {

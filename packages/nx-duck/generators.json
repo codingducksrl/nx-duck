@@ -10,6 +10,11 @@
             "factory": "./src/generators/prisma/generator",
             "schema": "./src/generators/prisma/schema.json",
             "description": "prisma generator"
+        },
+        "lambda": {
+            "factory": "./src/generators/lambda/generator",
+            "schema": "./src/generators/lambda/schema.json",
+            "description": "lambda generator"
         }
     }
 }

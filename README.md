@@ -1,5 +1,27 @@
 # NxDuck
 
+## Development
+
+To start the local verdaccio server, run
+
+```bash
+npx nx local-registry
+```
+
+Before publishing update the version in the `package.json` file of each package.
+
+To publish a package to the local verdaccio server, run
+
+```bash
+npx nx run-many -t publish
+```
+
+To test and create a new project use
+
+```bash
+npx @codingducksrl/create-nx-duck@0.3.5 test
+```
+
 # Todo
 
 -[ ] Add husky
