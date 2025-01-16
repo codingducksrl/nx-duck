@@ -2,7 +2,7 @@
     "name": "@codingducksrl/create-nx-duck",
     "version": "0.4.0",
     "dependencies": {
-        "create-nx-workspace": "20.3.1"
+        "create-nx-workspace": "19.8.9"
     },
     "type": "commonjs",
     "main": "./src/index.js",
