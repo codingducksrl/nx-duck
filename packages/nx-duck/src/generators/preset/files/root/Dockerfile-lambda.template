@@ -1,0 +1,19 @@
+FROM public.ecr.aws/lambda/nodejs:22 AS build
+
+WORKDIR /var/task
+COPY package.json .
+RUN npm install
+COPY . .
+RUN npx nx run-many -t build
+
+FROM public.ecr.aws/lambda/nodejs:22 AS runner
+
+COPY --from=build /var/task/package.json ${LAMBDA_TASK_ROOT}
+#COPY --from=build /var/task/package-lock.json ${LAMBDA_TASK_ROOT}
+RUN cd ${LAMBDA_TASK_ROOT} &&  npm install --omit=dev
+
+COPY --from=build /var/task/dist/* ${LAMBDA_TASK_ROOT}
+
+
+
+CMD [ "main.lambdaHandler" ]

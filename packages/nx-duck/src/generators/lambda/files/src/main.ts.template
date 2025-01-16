@@ -1,10 +1,14 @@
-import {APIGatewayEvent, APIGatewayProxyResult} from 'aws-lambda';
+import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Settings } from '@<%= workspaceName %>/settings';
 
-export const lambdaHandler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler = async (
+    event: APIGatewayEvent
+): Promise<APIGatewayProxyResult> => {
+    console.log(Settings.hello);
     return {
         statusCode: 200,
         body: JSON.stringify({
             message: 'Hello from Lambda!'
         })
-    }
-}
+    };
+};

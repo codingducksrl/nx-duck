@@ -1,6 +1,6 @@
 {
     "name": "@codingducksrl/create-nx-duck",
-    "version": "0.3.5",
+    "version": "0.4.0",
     "dependencies": {
         "create-nx-workspace": "20.3.1"
     },

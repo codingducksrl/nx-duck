@@ -1,5 +1,18 @@
 version: '3'
 services:
+<% if(lambda) { %>
+  lambda:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    platform: linux/arm64
+    command:
+        -   "lambdas.lambda.main.lambdaHandler"
+    ports:
+        - "9000:8080"
+    networks:
+      - nest
+<% } %>
 <% if(mariadb) { %>
   mariadb:
     image: 'mariadb:10'

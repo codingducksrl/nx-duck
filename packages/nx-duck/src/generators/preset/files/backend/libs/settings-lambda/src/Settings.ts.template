@@ -1,0 +1,9 @@
+import { Common } from './Common';
+
+export class Settings extends Common{
+
+    public static get hello() {
+        return this.get('HELLO', 'world');
+    }
+
+}

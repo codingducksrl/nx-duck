@@ -1,0 +1,15 @@
+export class Common {
+
+    protected static get(name: string, defaultValue: string) {
+        return process.env[name] || defaultValue;
+    }
+
+    protected  static getOrThrow(name: string) {
+        const value = process.env[name];
+        if (!value) {
+            throw new Error(`Environment variable ${name} is not set`);
+        }
+        return value;
+    }
+
+}

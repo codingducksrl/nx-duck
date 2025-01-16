@@ -41,6 +41,7 @@ export async function presetGenerator(
         mongodb: response.backend && response.backend.database === 'mongodb',
         redis: response.backend && response.backend.services.includes('redis'),
         mailpit: response.backend && response.backend.services.includes('email'),
+        lambda: response.backend && response.backend.framework === 'lambda',
         fs: response.backend && response.backend.services.includes('fs'),
         db: response.backend && !!response.backend.database,
         backend: response.type.includes('backend'),
@@ -57,6 +58,15 @@ export async function presetGenerator(
     if (!response.type.includes('backend')) {
         tree.delete('docker');
         tree.delete('docker-compose.yaml');
+    }
+
+    if (response.backend) {
+        if (response.backend.framework === 'lambda') {
+            tree.rename('Dockerfile-lambda', 'Dockerfile');
+        } else {
+            tree.delete('Dockerfile-lambda');
+        }
+
     }
 
     if (!(response.backend && !!response.backend.database)) {

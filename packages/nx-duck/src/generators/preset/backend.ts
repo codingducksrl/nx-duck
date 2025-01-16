@@ -38,12 +38,11 @@ async function createLambda(tree: Tree, configuration: Configuration, workspaceN
         directory: 'libs/settings'
     });
 
-    // generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'settings'), 'libs/settings', {
-    //     email: configuration.backend.services.includes('email'),
-    //     fs: configuration.backend.services.includes('fs')
-    // });
+    generateFiles(tree, path.join(__dirname, 'files', 'backend', 'libs', 'settings-lambda'), 'libs/settings', {
+        workspaceName: workspaceName
+    });
 
-    // tree.delete('libs/settings/src/lib');
+    tree.delete('libs/settings/src/lib');
 }
 
 async function createNestJS(tree: Tree, configuration: Configuration, workspaceName: string) {
