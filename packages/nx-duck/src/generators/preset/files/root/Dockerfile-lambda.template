@@ -12,8 +12,7 @@ COPY --from=build /var/task/package.json ${LAMBDA_TASK_ROOT}
 #COPY --from=build /var/task/package-lock.json ${LAMBDA_TASK_ROOT}
 RUN cd ${LAMBDA_TASK_ROOT} &&  npm install --omit=dev
 
-COPY --from=build /var/task/dist/* ${LAMBDA_TASK_ROOT}
-
-
+RUN mkdir -p ${LAMBDA_TASK_ROOT}/dist
+COPY --from=build /var/task/dist/* ${LAMBDA_TASK_ROOT}/dist
 
 CMD [ "main.lambdaHandler" ]

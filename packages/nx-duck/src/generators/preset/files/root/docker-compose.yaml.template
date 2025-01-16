@@ -1,17 +1,28 @@
 version: '3'
 services:
 <% if(lambda) { %>
-  lambda:
-    build:
-        context: .
-        dockerfile: Dockerfile
-    platform: linux/arm64
-    command:
-        -   "lambdas.lambda.main.lambdaHandler"
-    ports:
-        - "9000:8080"
-    networks:
-      - nest
+  traefik:
+      image: traefik:v3.2
+      # Enables the web UI and tells Traefik to listen to docker
+      command:
+          - --api=true
+          - --providers.docker=true
+          - --providers.docker.exposedbydefault=false
+          - --entryPoints.web.address=:80
+          - --log.level=debug
+      ports:
+          # The HTTP port
+          - "8080:80"
+      labels:
+          - traefik.enable=true
+          - traefik.http.routers.dashboard.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)
+          - traefik.http.routers.dashboard.service=api@internal
+          - traefik.http.middlewares.lambda-replacepath.replacepath.path=/2015-03-31/functions/function/invocations
+      volumes:
+          # So that Traefik can listen to the Docker events
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      networks:
+          - nest
 <% } %>
 <% if(mariadb) { %>
   mariadb:

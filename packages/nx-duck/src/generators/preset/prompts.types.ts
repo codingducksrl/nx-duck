@@ -4,8 +4,8 @@ export type Configuration = {
     type: ApplicationKind[];
     backend: {
         framework: 'nest' | 'lambda';
-        database: 'mysql' | 'mongodb' | false;
-        services: ('redis' | 'email' | 'fs')[];
+        database?: 'mysql' | 'mongodb' | false;
+        services?: ('redis' | 'email' | 'fs')[];
         deployment: 'aws-ecr' | false;
     },
     frontend: {

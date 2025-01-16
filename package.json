@@ -16,6 +16,7 @@
         "@storybook/addon-interactions": "8.5.0",
         "create-nx-workspace": "20.3.1",
         "inquirer": "^8.2.5",
+        "js-yaml": "^4.1.0",
         "storybook": "^8.2.8",
         "tslib": "^2.3.0"
     },
@@ -33,6 +34,7 @@
         "@swc/helpers": "0.5.12",
         "@types/inquirer": "^8.2.5",
         "@types/jest": "29.5.14",
+        "@types/js-yaml": "^4.0.9",
         "@types/node": "18.16.9",
         "@typescript-eslint/eslint-plugin": "7.18.0",
         "@typescript-eslint/parser": "7.18.0",

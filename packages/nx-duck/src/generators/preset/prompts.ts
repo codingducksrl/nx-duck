@@ -55,7 +55,7 @@ export async function promptConfiguration() {
                     { name: 'MongoDB', value: 'mongodb' },
                     { name: 'No database', value: false }
                 ],
-                when: (answers) => answers.type.includes('backend')
+                when: (answers) => answers.type.includes('backend') && answers.backend.framework === 'nest'
             },
             {
                 type: 'checkbox',
@@ -66,7 +66,7 @@ export async function promptConfiguration() {
                     { name: 'Email', value: 'email', checked: true },
                     { name: 'Filesystem', value: 'fs' }
                 ],
-                when: (answers) => answers.type.includes('backend')
+                when: (answers) => answers.type.includes('backend') && answers.backend.framework === 'nest'
             },
             {
                 type: 'list',

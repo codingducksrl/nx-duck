@@ -21,14 +21,6 @@ export async function presetGenerator(
 
     const response = await promptConfiguration();
 
-    if (response.type.includes('frontend')) {
-        await createFrontend(tree, response, options.name);
-    }
-
-    if (response.type.includes('backend')) {
-        await createBackend(tree, response, options.name);
-    }
-
     // addFiles(tree, options,{}, {}); // Adjusted for clarity
 
     // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
@@ -39,10 +31,10 @@ export async function presetGenerator(
     generateFiles(tree, path.join(__dirname, 'files', 'root'), `/`, {
         mariadb: response.backend && response.backend.database === 'mysql',
         mongodb: response.backend && response.backend.database === 'mongodb',
-        redis: response.backend && response.backend.services.includes('redis'),
-        mailpit: response.backend && response.backend.services.includes('email'),
+        redis: response.backend && response.backend.services?.includes('redis'),
+        mailpit: response.backend && response.backend.services?.includes('email'),
         lambda: response.backend && response.backend.framework === 'lambda',
-        fs: response.backend && response.backend.services.includes('fs'),
+        fs: response.backend && response.backend.services?.includes('fs'),
         db: response.backend && !!response.backend.database,
         backend: response.type.includes('backend'),
         frontend: response.type.includes('frontend'),
@@ -88,6 +80,14 @@ export async function presetGenerator(
         if (!response.staging) {
             tree.delete('.github/workflows/staging.yml');
         }
+    }
+
+    if (response.type.includes('frontend')) {
+        await createFrontend(tree, response, options.name);
+    }
+
+    if (response.type.includes('backend')) {
+        await createBackend(tree, response, options.name);
     }
 
     await formatFiles(tree);

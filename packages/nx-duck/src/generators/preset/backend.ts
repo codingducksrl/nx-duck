@@ -26,7 +26,7 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
 
 async function createLambda(tree: Tree, configuration: Configuration, workspaceName: string) {
     await lambdaGenerator(tree, {
-        name: 'lambda'
+        name: 'hello'
     });
 
     await jsLibraryGenerator(tree, {

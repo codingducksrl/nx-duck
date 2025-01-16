@@ -2,6 +2,7 @@ import { addDependenciesToPackageJson, formatFiles, generateFiles, readJson, Tre
 import { applicationGenerator } from '@nx/node';
 import * as path from 'path';
 import { LambdaGeneratorSchema } from './schema';
+import * as yaml from 'js-yaml';
 
 export async function lambdaGenerator(
     tree: Tree,
@@ -39,6 +40,32 @@ export async function lambdaGenerator(
         return file;
     });
 
+    const docker = yaml.load(tree.read('docker-compose.yaml').toString('utf-8'));
+
+    docker['services'][options.name] = {
+        build: {
+            context: `.`,
+            dockerfile: 'Dockerfile'
+        },
+        platform: 'linux/arm64',
+        command: [
+            `dist/${options.name}/main.lambdaHandler`
+        ],
+        labels: [
+            'traefik.enable=true',
+            `traefik.http.routers.${options.name}.rule=PathPrefix(\`/lambda/${options.name}\`)`,
+            `traefik.http.routers.${options.name}.entrypoints=web`,
+            `traefik.http.services.${options.name}.loadbalancer.server.port=8080`,
+            `traefik.http.services.${options.name}.loadbalancer.server.scheme=http`,
+            `traefik.http.routers.${options.name}.middlewares=lambda-replacepath`
+        ],
+        networks: [
+            'nest'
+        ]
+    };
+
+    tree.write('docker-compose.yaml', yaml.dump(docker));
+
     generateFiles(tree, path.join(__dirname, 'files'), projectRoot, {
         ...options,
         workspaceName: name
@@ -56,7 +83,7 @@ function getTargets(projectRoot: string) {
                 'platform': 'node',
                 'outputPath': `dist/${projectRoot}`,
                 'format': ['esm'],
-                'bundle': false,
+                'bundle': true,
                 'main': `${projectRoot}/src/main.ts`,
                 'tsConfig': `${projectRoot}/tsconfig.app.json`,
                 'assets': [`${projectRoot}/src/assets`],
