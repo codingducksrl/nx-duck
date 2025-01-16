@@ -26,7 +26,8 @@ export async function presetGenerator(
     // generateFiles(tree, path.join(__dirname, 'files'), projectRoot, options);
 
     const deployFrontend = response.frontend && response.frontend.deployment;
-    const deployBackend = response.backend && response.backend.deployment;
+    const deployBackend = response.backend && response.backend.deployment && response.backend.framework !== 'lambda';
+    const deployLambda = response.backend && response.backend.deployment && response.backend.framework === 'lambda';
 
     generateFiles(tree, path.join(__dirname, 'files', 'root'), `/`, {
         mariadb: response.backend && response.backend.database === 'mysql',
@@ -41,7 +42,8 @@ export async function presetGenerator(
         backendPath: getBackendApplicationPath(response),
         frontendPath: getFrontendApplicationPath(response),
         deployFrontend: deployFrontend,
-        deployBackend: deployBackend
+        deployBackend: deployBackend,
+        deployLambda: deployLambda
     });
 
     const env = tree.read('.env', 'utf-8');

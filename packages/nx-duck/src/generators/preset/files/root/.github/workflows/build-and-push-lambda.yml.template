@@ -1,0 +1,49 @@
+name: Backend
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        description: 'The environment to deploy to'
+        required: true
+      additional_tags:
+        type: string
+        description: 'Additional tags to apply to the image'
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate the short sha
+        uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+        with:
+          length: 7
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t ${{ vars.AWS_ECR_REPO }}:${{ steps.short-sha.outputs.sha }} -t ${{ vars.AWS_ECR_REPO }}:${{inputs.additional_tags}} -t ${{ vars.AWS_ECR_REPO }}:latest -f ./Dockerfile --build-arg="SHORT_SHA=${{ steps.short-sha.outputs.sha }}" .
+          docker push --all-tags ${{ vars.AWS_ECR_REPO }}
+          echo "::set-output name=image::${{ vars.AWS_ECR_REPO }}:${{ steps.short-sha.outputs.sha }}"

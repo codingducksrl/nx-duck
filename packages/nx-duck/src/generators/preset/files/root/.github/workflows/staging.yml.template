@@ -13,6 +13,14 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
+<% if(deployLambda) { %>
+    lambda:
+        name: Lambda deployment
+        uses: ./.github/workflows/build-and-push-lambda.yml
+        secrets: inherit
+        with:
+            environment: staging
+<% } %>
 <% if(deployBackend) { %>
     backend:
         name: Backend deployment
