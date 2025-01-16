@@ -16,52 +16,6 @@
             "name": "use-legacy-cache"
         },
         {
-            "version": "20.2.0-beta.5",
-            "description": "Update TypeScript ESLint packages to v8.13.0 if they are already on v8",
-            "implementation": "./src/migrations/update-20-2-0/update-typescript-eslint-v8-13-0",
-            "package": "@nx/eslint",
-            "name": "update-typescript-eslint-v8.13.0"
-        },
-        {
-            "version": "20.3.0-beta.1",
-            "description": "Update ESLint flat config to include .cjs, .mjs, .cts, and .mts files in overrides (if needed)",
-            "implementation": "./src/migrations/update-20-3-0/add-file-extensions-to-overrides",
-            "package": "@nx/eslint",
-            "name": "add-file-extensions-to-overrides"
-        },
-        {
-            "cli": "nx",
-            "version": "20.0.0-beta.5",
-            "description": "replace getJestProjects with getJestProjectsAsync",
-            "implementation": "./src/migrations/update-20-0-0/replace-getJestProjects-with-getJestProjectsAsync",
-            "package": "@nx/jest",
-            "name": "replace-getJestProjects-with-getJestProjectsAsync"
-        },
-        {
-            "cli": "nx",
-            "version": "19.6.0-beta.4",
-            "description": "Ensure Module Federation DTS is turned off by default.",
-            "factory": "./src/migrations/update-19-6-0/turn-off-dts-by-default",
-            "package": "@nx/react",
-            "name": "update-19-6-0-turn-module-federation-dts-off"
-        },
-        {
-            "cli": "nx",
-            "version": "19.6.0-beta.4",
-            "description": "Update the server file for Module Federation SSR port value to be the same as the 'serve' target port value.",
-            "factory": "./src/migrations/update-19-6-0/update-ssr-server-port",
-            "package": "@nx/react",
-            "name": "update-module-federation-ssr-server-file"
-        },
-        {
-            "cli": "nx",
-            "version": "19.6.1-beta.0",
-            "description": "Ensure Target Defaults are set correctly for Module Federation.",
-            "factory": "./src/migrations/update-19-6-1/ensure-depends-on-for-mf",
-            "package": "@nx/react",
-            "name": "update-19-6-1-ensure-module-federation-target-defaults"
-        },
-        {
             "cli": "nx",
             "version": "20.2.0-beta.2",
             "description": "Update the ModuleFederationConfig import use @nx/module-federation.",
@@ -86,12 +40,26 @@
             "name": "ensure-nx-module-federation-package"
         },
         {
+            "version": "20.2.0-beta.5",
+            "description": "Update TypeScript ESLint packages to v8.13.0 if they are already on v8",
+            "implementation": "./src/migrations/update-20-2-0/update-typescript-eslint-v8-13-0",
+            "package": "@nx/eslint",
+            "name": "update-typescript-eslint-v8.13.0"
+        },
+        {
+            "version": "20.3.0-beta.1",
+            "description": "Update ESLint flat config to include .cjs, .mjs, .cts, and .mts files in overrides (if needed)",
+            "implementation": "./src/migrations/update-20-3-0/add-file-extensions-to-overrides",
+            "package": "@nx/eslint",
+            "name": "add-file-extensions-to-overrides"
+        },
+        {
             "cli": "nx",
-            "version": "19.6.0-beta.0",
-            "description": "Update workspace to use Storybook v8",
-            "implementation": "./src/migrations/update-19-6-0/update-sb-8",
-            "package": "@nx/storybook",
-            "name": "update-19-6-0-add-nx-packages"
+            "version": "20.0.0-beta.5",
+            "description": "replace getJestProjects with getJestProjectsAsync",
+            "implementation": "./src/migrations/update-20-0-0/replace-getJestProjects-with-getJestProjectsAsync",
+            "package": "@nx/jest",
+            "name": "replace-getJestProjects-with-getJestProjectsAsync"
         }
     ]
 }
