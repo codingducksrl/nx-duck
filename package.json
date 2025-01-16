@@ -5,7 +5,7 @@
     "scripts": {},
     "private": true,
     "dependencies": {
-        "@nrwl/linter": "20.3.1",
+        "@nrwl/linter": "19.8.4",
         "@nx-tools/nx-prisma": "^6.5.0",
         "@nx/devkit": "20.3.1",
         "@nx/eslint": "20.3.1",
