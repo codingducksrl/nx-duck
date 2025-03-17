@@ -21,14 +21,15 @@ export async function lambdaGenerator(
     });
 
     addDependenciesToPackageJson(tree, {}, {
-        '@types/aws-lambda': '^8.10.147'
+        '@types/aws-lambda': '^8.10.147',
+        '@dotenvx/dotenvx': '^1.39.0'
     });
 
     const packageJson = readJson(tree, 'package.json');
     const name = packageJson.name.replace(/@/g, '').split('/').shift();
 
     updateJson(tree, path.join('lambdas', options.name, 'project.json'), (file) => {
-        file.targets = getTargets(projectRoot);
+        file.targets = getTargets(projectRoot, options);
         return file;
     });
 
@@ -49,7 +50,11 @@ export async function lambdaGenerator(
         },
         platform: 'linux/arm64',
         command: [
-            `dist/${options.name}/main.lambdaHandler`
+            `dist/lambdas/${options.name}/main.lambdaHandler`
+        ],
+        env_file: [
+            `./lambdas/${options.name}/.env`,
+            `./lambdas/${options.name}/.env.role`
         ],
         labels: [
             'traefik.enable=true',
@@ -73,7 +78,7 @@ export async function lambdaGenerator(
     await formatFiles(tree);
 }
 
-function getTargets(projectRoot: string) {
+function getTargets(projectRoot: string, options: LambdaGeneratorSchema) {
     return {
         'build': {
             'executor': '@nx/esbuild:esbuild',
@@ -108,6 +113,30 @@ function getTargets(projectRoot: string) {
                         }
                     }
                 }
+            }
+        },
+        'assume-role': {
+            'executor': 'nx:run-commands',
+            'options': {
+                'commands': [
+                    `./assume_role.sh ${options.arn} ${options.name}`
+                ]
+            }
+        },
+        'local': {
+            'executor': 'nx:run-commands',
+            'dependsOn': [
+                {
+                    'target': 'build'
+                },
+                {
+                    'target': 'assume-role'
+                }
+            ],
+            'options': {
+                'commands': [
+                    `dotenvx run -f ${projectRoot}/.env.role -f ${projectRoot}/.env -- node ./run_lambda.js ${options.name}`
+                ]
             }
         }
     };

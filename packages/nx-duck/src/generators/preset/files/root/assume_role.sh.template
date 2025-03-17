@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Ask for the ARN of the role you want to assume
+ROLE_ARN=$1
+if [ -z "$ROLE_ARN" ]; then
+    echo "Enter the ARN of the role you want to assume: "
+    read ROLE_ARN
+fi
+
+LAMBDA_FUNCTION_NAME=$2
+if [ -z "$LAMBDA_FUNCTION_NAME" ]; then
+    echo "Enter the name of the lambda function: "
+    read LAMBDA_FUNCTION_NAME
+fi
+
+
+# Assume the role using locally configured AWS credentials, then pass the assumed role to the container via environment
+# variables!
+
+ASSUMED_ROLE=$(aws sts assume-role \
+        --profile main \
+        --role-arn "$ROLE_ARN" \
+        --role-session-name "local-dev-role" \
+        --output text)
+
+
+echo "AWS_ACCESS_KEY_ID=$(echo $ASSUMED_ROLE | awk '{print $5}')" > ./lambdas/$LAMBDA_FUNCTION_NAME/.env.role
+echo "AWS_SECRET_ACCESS_KEY=$(echo $ASSUMED_ROLE |  awk '{print $7}')" >> ./lambdas/$LAMBDA_FUNCTION_NAME/.env.role
+echo "AWS_SESSION_TOKEN=$(echo $ASSUMED_ROLE |  awk '{print $8}')" >> ./lambdas/$LAMBDA_FUNCTION_NAME/.env.role
+echo "AWS_REGION=eu-central-1" >> ./lambdas/$LAMBDA_FUNCTION_NAME/.env.role
+

@@ -1,0 +1,18 @@
+const { STSClient, GetCallerIdentityCommand } = require("@aws-sdk/client-sts");
+
+async function getCurrentIdentity() {
+    const sts = new STSClient( );
+    const command = new GetCallerIdentityCommand({});
+    return await sts.send(command);
+}
+async function main() {
+    const identity = await getCurrentIdentity();
+
+    console.log("Running as:", identity.Arn);
+
+    const { lambdaHandler } = await import((`./dist/lambdas/${process.argv[2]}/main.mjs`));
+    const response = await lambdaHandler();
+    console.log(response);
+}
+
+main();

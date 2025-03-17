@@ -54,13 +54,12 @@ export async function presetGenerator(
         tree.delete('docker-compose.yaml');
     }
 
-    if (response.backend) {
-        if (response.backend.framework === 'lambda') {
-            tree.rename('Dockerfile-lambda', 'Dockerfile');
-        } else {
-            tree.delete('Dockerfile-lambda');
-        }
-
+    if (response.backend && response.backend.framework === 'lambda') {
+        tree.rename('Dockerfile-lambda', 'Dockerfile');
+    } else {
+        tree.delete('Dockerfile-lambda');
+        tree.delete('run_lambda.js');
+        tree.delete('assume_role.sh');
     }
 
     if (!(response.backend && !!response.backend.database)) {
