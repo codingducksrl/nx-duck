@@ -4,7 +4,6 @@ import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
 import { Linter } from '@nx/eslint';
 import { addDependenciesToPackageJson, generateFiles, Tree, updateJson } from '@nx/devkit';
 import * as path from 'node:path';
-import { lambdaGenerator } from '../lambda/generator';
 
 import { configurationGenerator as prismaGenerator } from '../prisma/generator';
 import { runCommandsGenerator } from '@nx/workspace';
@@ -25,9 +24,9 @@ export async function createBackend(tree: Tree, configuration: Configuration, wo
 }
 
 async function createLambda(tree: Tree, configuration: Configuration, workspaceName: string) {
-    await lambdaGenerator(tree, {
-        name: 'hello'
-    });
+    // await lambdaGenerator(tree, {
+    //     name: 'hello'
+    // });
 
     await jsLibraryGenerator(tree, {
         name: 'settings',
